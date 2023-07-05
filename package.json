@@ -1,0 +1,19 @@
+{
+  "name": "social_media_clone",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "start": "nuxt build && nuxt start",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest --environment jsdom",
+    "test:cov": "vitest run --environment jsdom --coverage",
+    "db:migration": "npx prisma db push"
+  },
+  "devDependencies": {
+    "@types/node": "^18",
+    "nuxt": "^3.6.1"
+  }
+}

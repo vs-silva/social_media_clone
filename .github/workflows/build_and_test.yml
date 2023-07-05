@@ -1,0 +1,76 @@
+name: Build & Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 19.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Building project
+        run: npm run build
+
+  tests:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Development
+
+    env:
+      DATABASE_URL: ${{ vars.DATABASE_URL }}
+      JWT_ACCESS_TOKEN_SECRET: ${{ vars.JWT_ACCESS_TOKEN_SECRET }}
+      JWT_REFRESH_TOKEN_SECRET: ${{ vars.JWT_REFRESH_TOKEN_SECRET }}
+      MEDIA_CLOUD_NAME: ${{ vars.MEDIA_CLOUD_NAME }}
+      MEDIA_CLOUD_API_KEY: ${{ vars.MEDIA_CLOUD_API_KEY }}
+      MEDIA_CLOUD_API_SECRET: ${{ vars.MEDIA_CLOUD_API_SECRET }}
+
+    strategy:
+      matrix:
+        node-version: [ 18.x, 19.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local server
+        run: npm run start &
+
+      - name: Wait for server to start
+        run: |
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+              echo "Waiting for server to start..."
+              sleep 5
+          done
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Generate test coverage
+        run: npm run test:cov
