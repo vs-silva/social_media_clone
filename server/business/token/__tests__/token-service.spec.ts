@@ -97,7 +97,11 @@ describe('Token service tests', () => {
 
         it('verifyToken should verify provided RequestTokenVerifyDTO and return TokenDTO', async () => {
 
+            fakeRequestTokenGenerateDTO.userId =  faker.database.mongodbObjectId();
             const token = await Token.generateTokens(fakeRequestTokenGenerateDTO);
+
+            expect(token?.refreshTokenId.trim()).toBeTruthy();
+            expect(token?.refreshToken.trim()).toBeTruthy();
 
             const fakeTokenVerifyRequestDTO: RequestTokenVerifyDTO = {
               id: token?.refreshTokenId as string,

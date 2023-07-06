@@ -71,15 +71,15 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
             return null;
         }
 
-        const tokenEntity = await reader.getBy(() => ({id: dto.id}));
-
-        if(!tokenEntity) {
-            return null;
-        }
-
         const tokenVerifyEntity = await engine.verify(dto);
 
         if(!tokenVerifyEntity) {
+            return null;
+        }
+
+        const tokenEntity = await reader.getBy(() => ({id: dto.id}));
+
+        if(!tokenEntity) {
             return null;
         }
 
