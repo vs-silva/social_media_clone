@@ -49,7 +49,6 @@ export function TokenServiceEngineAdapter(): TokenServiceEngineDrivenPorts {
 
     }
 
-    // @ts-ignore
     return {
       sign,
       verify

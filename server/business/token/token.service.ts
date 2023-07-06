@@ -4,9 +4,10 @@ import type {TokenServiceDatabaseWriterDrivenPorts} from "./ports/token-service-
 import type {TokenServiceDatabaseReaderDrivenPorts} from "./ports/token-service-database-reader-driven.ports";
 import type {RequestTokenGenerateDTO} from "./core/dtos/request-token-generate.dto";
 import type {TokenDTO} from "./core/dtos/token.dto";
+import type {RequestTokenRegisterDTO} from "./core/dtos/request-token-register.dto";
+import type {RequestTokenVerifyDTO} from "./core/dtos/request-token-verify.dto";
 import {TokenLifespanConstants} from "./core/constants/token-lifespan.constants";
-import {RequestTokenRegisterDTO} from "~/server/business/token/core/dtos/request-token-register.dto";
-import {RequestTokenVerifyDTO} from "~/server/business/token/core/dtos/request-token-verify.dto";
+
 
 export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceDatabaseWriterDrivenPorts, reader: TokenServiceDatabaseReaderDrivenPorts): TokenServiceDriverPorts {
 
