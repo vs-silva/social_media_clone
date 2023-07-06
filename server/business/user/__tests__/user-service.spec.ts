@@ -132,9 +132,60 @@ describe('User service tests', () => {
 
     describe('getUserById port tests', () => {
 
-        it.todo('getUserById should return a UserDTO if provided userId exist in data provider');
-        it.todo('getUserById should return Null if provided userId does not exist in data provider');
-        it.todo('getUserById should return Null if no userId is provided');
+        it('getUserById should return a UserDTO if provided userId exist in data provider', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            const user = await User.registerUser(fakeNewUser);
+
+            const spy = vi.spyOn(User, 'getUserById');
+            const result = await User.getUserById(user?.id as string);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(user?.id as string);
+
+            expect(result).toBeTruthy();
+            expect(result?.id).toBeTruthy();
+            expect(result?.id).toMatch(idRegex);
+            expect(result?.password).toMatch(hashedPasswordRegex);
+
+            expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
+                id: expect.any(String),
+                email: expect.any(String),
+                password: expect.any(String),
+                username: expect.any(String),
+                name: expect.any(String),
+                profileImage: expect.any(String),
+                profileCreateDate: expect.any(Date),
+                profileLastUpdateDate: expect.any(Date)
+            }));
+
+        });
+
+        it('getUserById should return Null if provided userId does not exist in data provider', async () => {
+
+            const fakeUserId = faker.database.mongodbObjectId();
+
+            const spy = vi.spyOn(User, 'getUserById');
+            const result = await User.getUserById(fakeUserId);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeUserId);
+
+            expect(result).toBeNull();
+        });
+
+        it('getUserById should return Null if empty string or userId is provided', async () => {
+
+            const fakeEmptyStringUserId = '  ';
+
+            const spy = vi.spyOn(User, 'getUserById');
+            const result = await User.getUserById(fakeEmptyStringUserId);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeEmptyStringUserId);
+
+            expect(result).toBeNull();
+        });
 
     });
 
