@@ -76,8 +76,34 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
         };
     }
 
+    async function getUserById(userId: string): Promise<UserDTO | null> {
+
+        if(!userId.trim()) {
+            return null;
+        }
+
+        const entity = await reader.getBy(() => ({id: userId}));
+
+        if(!entity) {
+            return null;
+        }
+
+        return <UserDTO>{
+            id: entity.id,
+            password: entity.password,
+            name: entity.name,
+            profileImage: entity.profileImage,
+            username: entity.username,
+            email: entity.email,
+            profileLastUpdateDate: entity.updatedAt,
+            profileCreateDate: entity.createdAt
+        };
+
+    }
+
     return {
         registerUser,
-        authenticateUser
+        authenticateUser,
+        getUserById
     };
 }

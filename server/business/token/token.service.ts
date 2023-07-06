@@ -1,14 +1,15 @@
 import type {TokenServiceDriverPorts} from "./ports/token-service-driver.ports";
 import type {TokenServiceEngineDrivenPorts} from "./ports/token-service-engine-driven.ports";
 import type {TokenServiceDatabaseWriterDrivenPorts} from "./ports/token-service-database-writer-driven.ports";
+import type {TokenServiceDatabaseReaderDrivenPorts} from "./ports/token-service-database-reader-driven.ports";
 import type {RequestTokenGenerateDTO} from "./core/dtos/request-token-generate.dto";
 import type {TokenDTO} from "./core/dtos/token.dto";
+import type {RequestTokenRegisterDTO} from "./core/dtos/request-token-register.dto";
+import type {RequestTokenVerifyDTO} from "./core/dtos/request-token-verify.dto";
 import {TokenLifespanConstants} from "./core/constants/token-lifespan.constants";
-import {RequestTokenRegisterDTO} from "~/server/business/token/core/dtos/request-token-register.dto";
 
 
-
-export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceDatabaseWriterDrivenPorts): TokenServiceDriverPorts {
+export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceDatabaseWriterDrivenPorts, reader: TokenServiceDatabaseReaderDrivenPorts): TokenServiceDriverPorts {
 
     async function generateTokens(dto: RequestTokenGenerateDTO): Promise<TokenDTO | null> {
 
@@ -43,7 +44,60 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
         };
     }
 
+    async function getRefreshTokenByToken(refreshToken: string): Promise<TokenDTO | null> {
+
+        if(!refreshToken) {
+            return null;
+        }
+
+        const entity = await reader.getBy(() => ({token: refreshToken}));
+
+        if(!entity) {
+            return null;
+        }
+
+        return <TokenDTO> {
+            userId: entity.userId,
+            refreshToken: entity.refreshToken,
+            refreshTokenId: entity.id,
+            refreshTokenUpdatedAt: entity.updatedAt,
+            refreshTokenCreatedAt: entity.createdAt
+        };
+    }
+
+    async function verifyToken(dto: RequestTokenVerifyDTO): Promise<TokenDTO | null> {
+
+        if(!dto.id?.trim() || !dto.token?.trim() || !dto.tokenSecret?.trim() ) {
+            return null;
+        }
+
+        const tokenEntity = await reader.getBy(() => ({id: dto.id}));
+
+        if(!tokenEntity) {
+            return null;
+        }
+
+        const tokenVerifyEntity = await engine.verify(dto);
+
+        if(!tokenVerifyEntity) {
+            return null;
+        }
+
+        return <TokenDTO>{
+            userId: tokenVerifyEntity.userId,
+            refreshToken: dto.token,
+            refreshTokenId: dto.id,
+            refreshTokenUpdatedAt: tokenEntity.updatedAt,
+            refreshTokenCreatedAt: tokenEntity.createdAt,
+            refreshExpireAtDate: tokenVerifyEntity.expireAt,
+            isValid: tokenVerifyEntity.isValid
+        };
+
+    }
+
     return {
-        generateTokens
+        generateTokens,
+        getRefreshTokenByToken,
+        verifyToken
     };
 }
