@@ -8,4 +8,5 @@ export interface UserDTO {
     profileCreateDate?: Date;
     profileLastUpdateDate?: Date;
     accessToken?: string;
+    refreshToken?: string;
 }

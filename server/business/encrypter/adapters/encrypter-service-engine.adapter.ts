@@ -9,7 +9,16 @@ export function EncrypterServiceEngineAdapter(): EncrypterServiceEngineDrivenPor
         return engine.hashSync(password, saltRounds);
     }
 
+    async function comparePasswords(password: string, existentPassword: string): Promise<boolean> {
+        try {
+            return await engine.compare(password, existentPassword);
+        } catch (error) {
+            return false;
+        }
+    }
+
     return {
-      hashPasswordSync
+      hashPasswordSync,
+      comparePasswords
     };
 }
