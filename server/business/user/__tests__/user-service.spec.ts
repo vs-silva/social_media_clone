@@ -62,4 +62,10 @@ describe('User service tests', () => {
 
     });
 
+    describe('authenticateUser port tests', () => {
+
+        it.todo('authenticateUser should return UserDTO with accessToken if provided login credentials are correct');
+
+    });
+
 });
