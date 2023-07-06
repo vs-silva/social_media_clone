@@ -6,8 +6,8 @@ import type {TokenDTO} from "../core/dtos/token.dto";
 
 describe('Token service tests', () => {
 
+    const idRegex = /\b[0-9a-f]{24}\b/;
     const tokenRegex = /[a-zA-Z0-9_-]+?\.[a-zA-Z0-9_-]+?\.[a-zA-Z0-9_-]+/;
-
 
     describe('generateTokens port tests', () => {
 
@@ -27,12 +27,18 @@ describe('Token service tests', () => {
 
             expect(result).toBeTruthy();
 
+            expect(result?.userId).toMatch(idRegex);
+            expect(result?.refreshTokenId).toMatch(idRegex);
             expect(result?.accessToken).toMatch(tokenRegex);
             expect(result?.refreshToken).toMatch(tokenRegex);
 
             expect(result).toStrictEqual(expect.objectContaining(<TokenDTO>{
+                userId: expect.any(String),
+                refreshTokenId: expect.any(String),
                 accessToken: expect.any(String),
-                refreshToken: expect.any(String)
+                refreshToken: expect.any(String),
+                refreshTokenCreatedAt: expect.any(Date),
+                refreshTokenUpdatedAt: expect.any(Date),
             }));
 
         });
