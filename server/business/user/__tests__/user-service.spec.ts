@@ -1,11 +1,15 @@
 import {describe, expect, it, vi} from "vitest";
 import {faker} from "@faker-js/faker";
+import User from "../index";
+import type {RequestUserRegisterDTO} from "../core/dtos/request-user-register.dto";
+import type {UserDTO} from "../core/dtos/user.dto";
 
 describe('User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
+    const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;
 
-    describe('RegisterUser port tests', () => {
+    describe('registerUser port tests', () => {
 
         const fakePassword = faker.internet.password();
 
@@ -17,7 +21,7 @@ describe('User service tests', () => {
             name: `${faker.person.firstName()} ${faker.person.lastName()}`
         };
 
-        it('RegisterUser port should create a new user and ResponseUserDTO', async () => {
+        it('registerUser port should create a new user and return UserDTO', async () => {
 
             fakeNewUser.username = faker.internet.userName();
 
@@ -30,15 +34,17 @@ describe('User service tests', () => {
             expect(result).toBeTruthy();
             expect(result?.id).toBeTruthy();
             expect(result?.id).toMatch(idRegex);
+            expect(result?.password).toMatch(hashedPasswordRegex);
 
-            expect(result).toStrictEqual(expect.objectContaining(<ResponseUserDTO>{
+            expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
                 id: expect.any(String),
                 email: expect.any(String),
+                password: expect.any(String),
                 username: expect.any(String),
+                name: expect.any(String),
                 profileImage: expect.any(String),
-                profileCreateDate: expect.any(String),
-                profileLastUpdateDate: expect.any(String),
-                accessToken: expect.any(String)
+                profileCreateDate: expect.any(Date),
+                profileLastUpdateDate: expect.any(Date)
             }));
         });
 
