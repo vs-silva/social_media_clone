@@ -6,6 +6,7 @@ import type {RequestTokenGenerateDTO} from "./core/dtos/request-token-generate.d
 import type {TokenDTO} from "./core/dtos/token.dto";
 import {TokenLifespanConstants} from "./core/constants/token-lifespan.constants";
 import {RequestTokenRegisterDTO} from "~/server/business/token/core/dtos/request-token-register.dto";
+import {RequestTokenVerifyDTO} from "~/server/business/token/core/dtos/request-token-verify.dto";
 
 export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceDatabaseWriterDrivenPorts, reader: TokenServiceDatabaseReaderDrivenPorts): TokenServiceDriverPorts {
 
@@ -59,12 +60,43 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
             refreshToken: entity.refreshToken,
             refreshTokenId: entity.id,
             refreshTokenUpdatedAt: entity.updatedAt,
-            refreshTokenCreatedAt: entity.createdAt,
+            refreshTokenCreatedAt: entity.createdAt
         };
+    }
+
+    async function verifyToken(dto: RequestTokenVerifyDTO): Promise<TokenDTO | null> {
+
+        if(!dto.id?.trim() || !dto.token?.trim() || !dto.tokenSecret?.trim() ) {
+            return null;
+        }
+
+        const tokenEntity = await reader.getBy(() => ({id: dto.id}));
+
+        if(!tokenEntity) {
+            return null;
+        }
+
+        const tokenVerifyEntity = await engine.verify(dto);
+
+        if(!tokenVerifyEntity) {
+            return null;
+        }
+
+        return <TokenDTO>{
+            userId: tokenVerifyEntity.userId,
+            refreshToken: dto.token,
+            refreshTokenId: dto.id,
+            refreshTokenUpdatedAt: tokenEntity.updatedAt,
+            refreshTokenCreatedAt: tokenEntity.createdAt,
+            refreshExpireAtDate: tokenVerifyEntity.expireAt,
+            isValid: tokenVerifyEntity.isValid
+        };
+
     }
 
     return {
         generateTokens,
-        getRefreshTokenByToken
+        getRefreshTokenByToken,
+        verifyToken
     };
 }

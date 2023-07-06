@@ -5,4 +5,6 @@ export interface TokenDTO {
     refreshToken: string;
     refreshTokenCreatedAt: Date;
     refreshTokenUpdatedAt: Date;
+    refreshExpireAtDate?: Date;
+    isValid?: boolean;
 }

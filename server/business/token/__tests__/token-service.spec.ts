@@ -3,6 +3,7 @@ import {faker} from "@faker-js/faker";
 import Token from "../index";
 import type {RequestTokenGenerateDTO} from "../core/dtos/request-token-generate.dto";
 import type {TokenDTO} from "../core/dtos/token.dto";
+import type {RequestTokenVerifyDTO} from "../core/dtos/request-token-verify.dto";
 
 describe('Token service tests', () => {
 
@@ -87,6 +88,55 @@ describe('Token service tests', () => {
             const result = await Token.getRefreshTokenByToken('');
 
             expect(spy).toHaveBeenCalledOnce();
+            expect(result).toBeNull();
+        });
+
+    });
+
+    describe('verifyToken port tests', () => {
+
+        it('verifyToken should verify provided RequestTokenVerifyDTO and return TokenDTO', async () => {
+
+            const token = await Token.generateTokens(fakeRequestTokenGenerateDTO);
+
+            const fakeTokenVerifyRequestDTO: RequestTokenVerifyDTO = {
+              id: token?.refreshTokenId as string,
+              token: token?.refreshToken as string,
+              tokenSecret: fakeRequestTokenGenerateDTO.refreshTokenSecret
+            };
+
+            const spy = vi.spyOn(Token, 'verifyToken');
+            const result = await Token.verifyToken(fakeTokenVerifyRequestDTO);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeTokenVerifyRequestDTO);
+
+            expect(result).toStrictEqual(expect.objectContaining(<TokenDTO>{
+                userId: expect.any(String),
+                refreshTokenId: expect.any(String),
+                refreshToken: expect.any(String),
+                refreshTokenCreatedAt: expect.any(Date),
+                refreshTokenUpdatedAt: expect.any(Date),
+                refreshExpireAtDate: expect.any(Date),
+                isValid: expect.any(Boolean)
+            }));
+
+        });
+
+        it('verifyToken should return Null if required fields are not provided', async () => {
+
+            const fakeTokenVerifyRequestDTO: RequestTokenVerifyDTO = {
+              id: faker.database.mongodbObjectId(),
+              token: ' ',
+              tokenSecret:  `${faker.word.words(1)}_${faker.word.words(1)}`
+            };
+
+            const spy = vi.spyOn(Token, 'verifyToken');
+            const result = await Token.verifyToken(fakeTokenVerifyRequestDTO);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeTokenVerifyRequestDTO);
+
             expect(result).toBeNull();
         });
 
