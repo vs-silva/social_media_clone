@@ -130,4 +130,12 @@ describe('User service tests', () => {
 
     });
 
+    describe('getUserById port tests', () => {
+
+        it.todo('getUserById should return a UserDTO if provided userId exist in data provider');
+        it.todo('getUserById should return Null if provided userId does not exist in data provider');
+        it.todo('getUserById should return Null if no userId is provided');
+
+    });
+
 });
