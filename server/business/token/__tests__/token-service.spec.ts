@@ -44,4 +44,12 @@ describe('Token service tests', () => {
         });
 
     });
+
+    describe('getRefreshTokenByToken port tests', () => {
+
+        it.todo('getRefreshTokenByToken should return a TokenDTO');
+        it.todo('getRefreshTokenByToken should return null if refreshToken is not found on data provider');
+        it.todo('getRefreshTokenByToken should return null if refreshToken is not provided');
+
+    });
 });

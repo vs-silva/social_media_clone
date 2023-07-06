@@ -3,4 +3,5 @@ import type {TokenDTO} from "../core/dtos/token.dto";
 
 export interface TokenServiceDriverPorts {
     generateTokens(dto: RequestTokenGenerateDTO): Promise<TokenDTO | null>;
+    getRefreshTokenByToken(refreshToken: string): Promise<TokenDTO | null>;
 }
