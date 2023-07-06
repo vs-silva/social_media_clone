@@ -1,25 +1,23 @@
-import type {UserServiceWriterDrivenPorts} from "../ports/user-service-writer-driven.ports";
-import type {UserDTO} from "../core/dtos/user.dto";
+import type {UserServiceReaderDrivenPorts} from "../ports/user-service-reader-driven.ports";
 import type {UserEntity} from "../core/entities/user.entity";
 import DataProvider from "../../../engines/data-provider";
 import {User} from "@prisma/client";
 
-export function UserServiceDatabaseWriterAdapter(): UserServiceWriterDrivenPorts {
+export function UserServiceDatabaseReaderAdapter(): UserServiceReaderDrivenPorts {
 
     const engine = DataProvider;
-    async function save(dto: UserDTO): Promise<UserEntity | null> {
+
+    async function getBy(expression: () => {}): Promise<UserEntity | null> {
 
         try {
 
-            const dbEntity: User = await engine.user.create({
-                data: {
-                    email: dto.email,
-                    username:dto.username,
-                    password: dto.password,
-                    name: dto.name,
-                    profileImage: dto.profileImage
-                }
+            const dbEntity: User | null = await engine.user.findUnique({
+                where: expression()
             });
+
+            if(!dbEntity) {
+                return null;
+            }
 
             return <UserEntity>{
                 id: dbEntity.id,
@@ -32,13 +30,14 @@ export function UserServiceDatabaseWriterAdapter(): UserServiceWriterDrivenPorts
                 updatedAt: dbEntity.updatedAt
             };
 
-        } catch ( error ) {
+
+        } catch (error) {
             return null;
         }
 
     }
 
     return {
-        save
+      getBy
     };
 }
