@@ -48,6 +48,18 @@ describe('User service tests', () => {
             }));
         });
 
+        it('registerUser port should not create a new user and return null if required field is not provided', async () => {
+
+            const spy = vi.spyOn(User, 'registerUser');
+            const result = await User.registerUser(fakeNewUser);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeNewUser);
+
+            expect(result).toBeNull();
+            
+        });
+
     });
 
 });
