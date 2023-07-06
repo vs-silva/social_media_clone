@@ -1,7 +1,7 @@
 export interface TokenDTO {
     userId: string;
     refreshTokenId: string;
-    accessToken: string;
+    accessToken?: string;
     refreshToken: string;
     refreshTokenCreatedAt: Date;
     refreshTokenUpdatedAt: Date;

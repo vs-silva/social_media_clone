@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from "vitest";
 import {faker} from "@faker-js/faker";
 import Token from "../index";
-import type {RequestTokenGenerateDTO} from "~/server/business/token/core/dtos/request-token-generate.dto";
+import type {RequestTokenGenerateDTO} from "../core/dtos/request-token-generate.dto";
 import type {TokenDTO} from "../core/dtos/token.dto";
 
 describe('Token service tests', () => {
@@ -62,7 +62,6 @@ describe('Token service tests', () => {
             expect(result).toStrictEqual(expect.objectContaining(<TokenDTO>{
                 userId: expect.any(String),
                 refreshTokenId: expect.any(String),
-                accessToken: expect.any(String),
                 refreshToken: expect.any(String),
                 refreshTokenCreatedAt: expect.any(Date),
                 refreshTokenUpdatedAt: expect.any(Date)
