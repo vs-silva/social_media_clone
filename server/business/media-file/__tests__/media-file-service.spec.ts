@@ -55,4 +55,10 @@ describe('Media File service tests', () => {
 
     });
 
+    describe('createMediaFile port tests', () => {
+
+        it.todo('createMedia should save a MediaFileCloudDTO on the dataProvider');
+
+    });
+
 });
