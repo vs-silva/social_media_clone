@@ -1,2 +1,2 @@
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 export default bcrypt;
