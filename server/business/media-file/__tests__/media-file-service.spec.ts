@@ -7,6 +7,7 @@ import type {MediaFileCloudDTO} from "../core/dtos/media-file-cloud.dto";
 describe('Media File service tests', () => {
 
     const idRegex = /^[a-fA-F0-9]{32}$/;
+    const publicIdRegex = /^[a-zA-Z0-9]{20}$/;
 
     describe('uploadMediaFile port tests', () => {
 
@@ -21,7 +22,7 @@ describe('Media File service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeImage);
 
             expect(result?.id).toMatch(idRegex);
-            expect(result?.publicId).toMatch(idRegex);
+            expect(result?.publicId).toMatch(publicIdRegex);
             expect(result?.url.trim()).not.toBeFalsy();
 
             expect(result).toStrictEqual(expect.objectContaining(<MediaFileCloudDTO>{
