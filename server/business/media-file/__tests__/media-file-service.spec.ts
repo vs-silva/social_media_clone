@@ -6,14 +6,13 @@ import type {MediaFileCloudDTO} from "../core/dtos/media-file-cloud.dto";
 
 describe('Media File service tests', () => {
 
-    const idRegex = /\b[0-9a-f]{24}\b/;
+    const idRegex = /^[a-fA-F0-9]{32}$/;
 
     describe('uploadMediaFile port tests', () => {
 
         it('uploadMediaFile should upload file resource to cloud media provider and return MediaFileResourceEntity', async () => {
 
             const fakeImage = faker.image.url();
-            console.log(fakeImage)
 
             const spy = vi.spyOn(MediaFile, 'uploadMediaFile');
             const result = await MediaFile.uploadMediaFile(fakeImage);
