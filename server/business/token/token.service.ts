@@ -1,7 +1,7 @@
 import type {TokenServiceDriverPorts} from "./ports/token-service-driver.ports";
 import type {TokenServiceEngineDrivenPorts} from "./ports/token-service-engine-driven.ports";
-import type {TokenServiceDatabaseWriterDrivenPorts} from "./ports/token-service-database-writer-driven.ports";
-import type {TokenServiceDatabaseReaderDrivenPorts} from "./ports/token-service-database-reader-driven.ports";
+import type {TokenServiceWriterDrivenPorts} from "./ports/token-service-writer-driven.ports";
+import type {TokenServiceReaderDrivenPorts} from "./ports/token-service-reader-driven.ports";
 import type {RequestTokenGenerateDTO} from "./core/dtos/request-token-generate.dto";
 import type {TokenDTO} from "./core/dtos/token.dto";
 import type {RequestTokenRegisterDTO} from "./core/dtos/request-token-register.dto";
@@ -9,7 +9,7 @@ import type {RequestTokenVerifyDTO} from "./core/dtos/request-token-verify.dto";
 import {TokenLifespanConstants} from "./core/constants/token-lifespan.constants";
 
 
-export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceDatabaseWriterDrivenPorts, reader: TokenServiceDatabaseReaderDrivenPorts): TokenServiceDriverPorts {
+export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceWriterDrivenPorts, reader: TokenServiceReaderDrivenPorts): TokenServiceDriverPorts {
 
     async function generateTokens(dto: RequestTokenGenerateDTO): Promise<TokenDTO | null> {
 

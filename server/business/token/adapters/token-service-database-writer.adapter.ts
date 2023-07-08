@@ -1,10 +1,10 @@
-import type {TokenServiceDatabaseWriterDrivenPorts} from "../ports/token-service-database-writer-driven.ports";
+import type {TokenServiceWriterDrivenPorts} from "../ports/token-service-writer-driven.ports";
 import type {TokenEntity} from "../core/entities/token.entity";
 import type {RequestTokenRegisterDTO} from "../core/dtos/request-token-register.dto";
 import DataProvider from "../../../engines/data-provider";
 import {RefreshToken} from "@prisma/client";
 
-export function TokenServiceDatabaseWriterAdapter(): TokenServiceDatabaseWriterDrivenPorts {
+export function TokenServiceDatabaseWriterAdapter(): TokenServiceWriterDrivenPorts {
 
     const engine = DataProvider;
 
