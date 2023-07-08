@@ -67,7 +67,7 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
 
     async function verifyToken(dto: RequestTokenVerifyDTO): Promise<TokenDTO | null> {
 
-        if(!dto.id?.trim() || !dto.token?.trim() || !dto.tokenSecret?.trim() ) {
+        if(!dto.token?.trim() || !dto.tokenSecret?.trim() ) {
             return null;
         }
 

@@ -1,5 +1,5 @@
 export interface RequestTokenVerifyDTO {
-    id: string;
+    id?: string;
     token: string;
     tokenSecret: string;
 }
