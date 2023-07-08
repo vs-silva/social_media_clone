@@ -14,6 +14,10 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
 
     async function registerUser(dto: RequestUserRegisterDTO): Promise<UserDTO | null> {
 
+        if(!dto.username.trim() || !dto.email.trim() || !dto.password.trim() || !dto.repeatPassword.trim()) {
+            return null;
+        }
+
         const entity = await writer.save({
             email: dto.email,
             username: dto.username,
