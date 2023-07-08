@@ -5,5 +5,4 @@ export interface ResponseUserRegisterDTO {
     profileImage: string;
     profileCreateDate: Date;
     profileLastUpdateDate: Date;
-    accessToken: string;
 }
