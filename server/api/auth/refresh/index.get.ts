@@ -21,7 +21,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const tokenDTO = await Token.getRefreshTokenByToken(refreshToken);
 
-    if(!refreshToken) {
+    if(!tokenDTO) {
         return sendError(event, createError({
             statusCode: 401,
             statusMessage: 'Invalid refresh token',
