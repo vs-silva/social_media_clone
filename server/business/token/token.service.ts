@@ -77,7 +77,7 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
             return null;
         }
 
-        const tokenEntity = await reader.getBy(() => ({id: dto.id}));
+        const tokenEntity = await reader.getBy(() => ({token: dto.token}));
 
         if(!tokenEntity) {
             return null;
