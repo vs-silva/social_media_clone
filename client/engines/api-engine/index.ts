@@ -14,7 +14,7 @@ export function ApiEngine(dto: ApiEngineConfigDTO, emitter?: ApiEngineEventEmitt
     });
 
     engine.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-        if(!dto.startedServiceRequestEvent.trim()){
+        if(dto.startedServiceRequestEvent?.trim()){
             emitter?.emit(dto.startedServiceRequestEvent);
         }
 
@@ -24,7 +24,7 @@ export function ApiEngine(dto: ApiEngineConfigDTO, emitter?: ApiEngineEventEmitt
 
     engine.interceptors.response.use((response: AxiosResponse) => {
 
-        if(!dto.endedServiceRequestEvent.trim()){
+        if(dto.endedServiceRequestEvent?.trim()){
             emitter?.emit(dto.endedServiceRequestEvent);
         }
 
@@ -33,7 +33,7 @@ export function ApiEngine(dto: ApiEngineConfigDTO, emitter?: ApiEngineEventEmitt
 
     function handleRejectError(error: object): object {
 
-        if(!dto.errorServiceRequestEvent.trim()){
+        if(dto.errorServiceRequestEvent?.trim()){
             emitter?.emit(dto.errorServiceRequestEvent);
         }
 
