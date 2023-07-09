@@ -39,19 +39,19 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const accessToken = authorizationToken[authorizationToken.length-1];
 
-    const tokenDTO = await Token.verifyToken({
+    const accessTokenVerifyDTO = await Token.verifyAccessToken({
         token: accessToken,
         tokenSecret: Settings.accessTokenSecret as string
     });
 
-    if(!tokenDTO || !tokenDTO.isValid) {
+    if(!accessTokenVerifyDTO || !accessTokenVerifyDTO.isValid) {
         return sendError(event, createError({
             statusCode: 401,
             statusMessage: 'Unauthorized',
         }));
     }
 
-    const userDTO = await User.getUserById(tokenDTO?.userId as string);
+    const userDTO = await User.getUserById(accessTokenVerifyDTO?.userId as string);
 
     if(!userDTO) {
         return sendError(event, createError({
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event: H3Event) => {
         profileImage: userDTO.profileImage,
         profileCreateDate: userDTO.profileCreateDate,
         profileLastUpdateDate: userDTO.profileLastUpdateDate,
-        accessToken: userDTO.accessToken
+        accessToken: accessToken
     };
 
 });
