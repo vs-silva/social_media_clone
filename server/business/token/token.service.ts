@@ -6,7 +6,9 @@ import type {RequestTokenGenerateDTO} from "./core/dtos/request-token-generate.d
 import type {TokenDTO} from "./core/dtos/token.dto";
 import type {RequestTokenRegisterDTO} from "./core/dtos/request-token-register.dto";
 import type {RequestTokenVerifyDTO} from "./core/dtos/request-token-verify.dto";
+import type {ResponseTokenAccessVerifyDTO} from "./core/dtos/response-token-access-verify.dto";
 import {TokenLifespanConstants} from "./core/constants/token-lifespan.constants";
+
 
 
 export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: TokenServiceWriterDrivenPorts, reader: TokenServiceReaderDrivenPorts): TokenServiceDriverPorts {
@@ -86,7 +88,7 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
         return <TokenDTO>{
             userId: tokenVerifyEntity.userId,
             refreshToken: dto.token,
-            refreshTokenId: dto.id,
+            refreshTokenId: tokenEntity.id,
             refreshTokenUpdatedAt: tokenEntity.updatedAt,
             refreshTokenCreatedAt: tokenEntity.createdAt,
             refreshExpireAtDate: tokenVerifyEntity.expireAt,
@@ -95,9 +97,30 @@ export function TokenService(engine: TokenServiceEngineDrivenPorts, writer: Toke
 
     }
 
+    async function verifyAccessToken(dto: RequestTokenVerifyDTO): Promise<ResponseTokenAccessVerifyDTO | null> {
+
+        if(!dto.token?.trim() || !dto.tokenSecret?.trim() ) {
+            return null;
+        }
+
+        const tokenVerifyEntity = await engine.verify(dto);
+
+        if(!tokenVerifyEntity) {
+            return null;
+        }
+
+        return <ResponseTokenAccessVerifyDTO> {
+          userId: tokenVerifyEntity.userId,
+          createdAt: tokenVerifyEntity.createdAt,
+          expireAt: tokenVerifyEntity.expireAt,
+          isValid: tokenVerifyEntity.isValid
+        };
+    }
+
     return {
         generateTokens,
         getRefreshTokenByToken,
-        verifyToken
+        verifyToken,
+        verifyAccessToken
     };
 }
