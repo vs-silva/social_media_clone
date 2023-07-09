@@ -1,9 +1,11 @@
 import axios, {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from "axios";
+import type {ApiEngineConfigDTO} from "./api-engine-config.dto";
+import type {ApiEngineEventEmitterDriverPorts} from "./api-engine-event-emitter-driver.ports";
 
-export function ApiEngine(baseURL: string, emitter?: EventEmitterDriverPorts): AxiosInstance {
+export function ApiEngine(dto: ApiEngineConfigDTO, emitter?: ApiEngineEventEmitterDriverPorts): AxiosInstance {
 
     const engine = axios.create({
-        baseURL: baseURL,
+        baseURL: dto.baseURL,
         timeout: (60 * 1000),
         timeoutErrorMessage: 'Timeout error. Please verify service availability and network connection.', //TODO - change this I18n
         headers: {
@@ -12,8 +14,8 @@ export function ApiEngine(baseURL: string, emitter?: EventEmitterDriverPorts): A
     });
 
     engine.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-        if(!startedServiceRequestEvent.trim()){
-            emitter?.emit(startedServiceRequestEvent);
+        if(!dto.startedServiceRequestEvent.trim()){
+            emitter?.emit(dto.startedServiceRequestEvent);
         }
 
         return config;
@@ -22,8 +24,8 @@ export function ApiEngine(baseURL: string, emitter?: EventEmitterDriverPorts): A
 
     engine.interceptors.response.use((response: AxiosResponse) => {
 
-        if(!endedServiceRequestEvent.trim()){
-            emitter?.emit(endedServiceRequestEvent);
+        if(!dto.endedServiceRequestEvent.trim()){
+            emitter?.emit(dto.endedServiceRequestEvent);
         }
 
         return response;
@@ -31,8 +33,8 @@ export function ApiEngine(baseURL: string, emitter?: EventEmitterDriverPorts): A
 
     function handleRejectError(error: object): object {
 
-        if(!errorServiceRequestEvent.trim()){
-            emitter?.emit(errorServiceRequestEvent);
+        if(!dto.errorServiceRequestEvent.trim()){
+            emitter?.emit(dto.errorServiceRequestEvent);
         }
 
         return Promise.reject(error);
