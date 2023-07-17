@@ -7,6 +7,8 @@ import {ApiEngineConfigDTO} from "../../../engines/api-engine/api-engine-config.
 import EventbusEngine from "../../../engines/eventbus-engine";
 import {UserServiceResourceConstants} from "../core/constants/user-service-resource.constants";
 import {UserServiceEventTypeConstants} from "../core/constants/user-service-event-type.constants";
+import {RequestUserAuthDTO} from "~/server/business/user/core/dtos/request-user-auth.dto";
+import {ResponseUserAuthDTO} from "~/server/business/user/core/dtos/response-user-auth.dto";
 
 export function UserServiceApiWriterAdapter(): UserServiceWriterDrivenPorts {
 
@@ -28,7 +30,18 @@ export function UserServiceApiWriterAdapter(): UserServiceWriterDrivenPorts {
 
     }
 
+    async function login(dto: RequestUserAuthDTO, resource: string): Promise<ResponseUserAuthDTO | null> {
+
+        try {
+            const response = await engine.post(resource, dto);
+            return response.data as ResponseUserAuthDTO;
+        } catch (error) {
+            return null;
+        }
+    }
+
     return {
-      register
+      register,
+        login
     };
 }
