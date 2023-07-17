@@ -7,7 +7,7 @@ export function ApiEngine(dto: ApiEngineConfigDTO, emitter?: ApiEngineEventEmitt
     const engine = axios.create({
         baseURL: dto.baseURL,
         timeout: (60 * 1000),
-        timeoutErrorMessage: 'Timeout error. Please verify service availability and network connection.', //TODO - change this I18n
+        timeoutErrorMessage: 'api.message.error.timeout',
         headers: {
             'Content-Type': 'application/json'
         }
