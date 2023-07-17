@@ -113,4 +113,10 @@ describe('Integration: User service tests', () => {
 
     });
 
+    describe('refreshToken port tests', () => {
+
+        it.todo('refreshToken should return a accessToken for registered and logged in user');
+        
+    });
+
 });
