@@ -1,8 +1,10 @@
 import {describe, expect, it, vi} from "vitest";
 import {faker} from "@faker-js/faker";
+import User from "../index";
 import type {RequestUserRegisterDTO} from "../../../../server/business/user/core/dtos/request-user-register.dto";
 import type {ResponseUserRegisterDTO} from "../../../../server/business/user/core/dtos/response-user-register.dto";
-import User from "../index";
+import type{RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
+import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 
 describe('Integration: User service tests', () => {
 
@@ -20,7 +22,7 @@ describe('Integration: User service tests', () => {
 
     describe('signup port tests', () => {
 
-        it('signup should create take a RequestUserAuthDTO create a new user and return a ResponseUserRegisterDTO', async () => {
+        it('signup should take a RequestUserAuthDTO create a new user and return a ResponseUserRegisterDTO', async () => {
 
             fakeNewUser.username = faker.internet.userName();
 
@@ -56,6 +58,57 @@ describe('Integration: User service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeNewUser);
 
             expect(result).toBeNull();
+        });
+
+    });
+
+    describe('login port tests', () => {
+
+        it('login should take a RequestUserAuthDTO allow access to a registered user and return a ResponseUserAuthDTO', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            const registeredUser = await User.signup(fakeNewUser);
+
+            const requestPayload:RequestUserAuthDTO = {
+                username: registeredUser?.username as string,
+                password: fakeNewUser.password
+            };
+
+            const spy = vi.spyOn(User, 'login');
+            const result = await User.login(requestPayload);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(requestPayload);
+
+            expect(result).toBeTruthy();
+
+            expect(result).toStrictEqual(expect.objectContaining(<ResponseUserAuthDTO>{
+                id: expect.any(String),
+                email: expect.any(String),
+                username: expect.any(String),
+                profileImage: expect.any(String),
+                profileCreateDate: expect.any(String),
+                profileLastUpdateDate: expect.any(String),
+                accessToken: expect.any(String)
+            }));
+
+        });
+
+        it('login should return null if provided login credentials are invalid', async () => {
+
+            const fakeRequestPayload: RequestUserAuthDTO = {
+              username: faker.internet.userName(),
+              password: faker.internet.password()
+            };
+
+            const spy = vi.spyOn(User, 'login');
+            const result = await User.login(fakeRequestPayload);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeRequestPayload);
+
+            expect(result).toBeNull();
+
         });
 
     });
