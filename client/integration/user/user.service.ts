@@ -1,14 +1,15 @@
 import type {UserServiceDriverPort} from "./ports/user-service-driver.port";
 import type {UserServiceWriterDrivenPorts} from "./ports/user-service-writer-driven.ports";
+import type {UserServiceReaderDrivenPorts} from "./ports/user-service-reader-driven.ports";
+import {UserServiceResourceConstants} from "./core/constants/user-service-resource.constants";
 import type {ResponseUserRegisterDTO} from "../../../server/business/user/core/dtos/response-user-register.dto";
 import type {RequestUserRegisterDTO} from "../../../server/business/user/core/dtos/request-user-register.dto";
 import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/response-user-auth.dto";
 import type {RequestUserAuthDTO} from "../../../server/business/user/core/dtos/request-user-auth.dto";
+import type {ResponseTokenRefreshDTO} from "../../../server/business/token/core/dtos/response-token-refresh.dto";
 
 
-import {UserServiceResourceConstants} from "./core/constants/user-service-resource.constants";
-
-export function UserService(writer: UserServiceWriterDrivenPorts):UserServiceDriverPort {
+export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserServiceReaderDrivenPorts):UserServiceDriverPort {
 
     async function signup(dto: RequestUserRegisterDTO): Promise<ResponseUserRegisterDTO | null> {
 
@@ -33,8 +34,26 @@ export function UserService(writer: UserServiceWriterDrivenPorts):UserServiceDri
 
     }
 
+    async function refreshToken(accessToken: string): Promise<ResponseTokenRefreshDTO | null> {
+
+        const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
+
+        if(!tokenRegex.test(accessToken)) {
+            return null;
+        }
+
+        const result = await reader.refresh(UserServiceResourceConstants.REFRESH);
+
+        if(!result) {
+            return null;
+        }
+
+        return result;
+    }
+
     return {
         signup,
-        login
+        login,
+        refreshToken
     };
 }

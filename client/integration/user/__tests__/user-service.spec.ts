@@ -5,6 +5,7 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {ResponseUserRegisterDTO} from "../../../../server/business/user/core/dtos/response-user-register.dto";
 import type{RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
+import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
 
 describe('Integration: User service tests', () => {
 
@@ -109,6 +110,54 @@ describe('Integration: User service tests', () => {
 
             expect(result).toBeNull();
 
+        });
+
+    });
+
+    describe('refreshToken port tests', () => {
+
+        it('refreshToken should return a ResponseTokenRefreshDTO with accessToken for registered and logged in user with a valid accessToken', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            const registeredUser = await User.signup(fakeNewUser);
+
+            const loginPayload:RequestUserAuthDTO = {
+                username: registeredUser?.username as string,
+                password: fakeNewUser.password
+            };
+
+            const loggedInUser = await User.login(loginPayload);
+            expect(loggedInUser?.id).toBeTruthy();
+            expect(loggedInUser?.accessToken).toBeTruthy();
+
+            const spy = vi.spyOn(User, 'refreshToken');
+            const result = await User.refreshToken(loggedInUser?.accessToken as string);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(loggedInUser?.accessToken);
+            expect(result).toBeTruthy();
+
+            expect(result?.userId).toMatch(idRegex);
+            expect(result?.accessToken).toMatch(tokenRegex);
+
+            expect(result).toStrictEqual(expect.objectContaining(<ResponseTokenRefreshDTO>{
+                userId: expect.any(String),
+                accessToken: expect.any(String),
+            }));
+
+        });
+
+        it('refreshToken should return null for an invalid accessToken', async () => {
+
+            const fakeAccessToken = faker.word.sample(10);
+
+            const spy = vi.spyOn(User, 'refreshToken');
+            const result = await User.refreshToken(fakeAccessToken);
+
+            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(result).toBeNull();
         });
 
     });
