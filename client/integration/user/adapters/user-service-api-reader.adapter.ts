@@ -1,13 +1,13 @@
 import type {UserServiceReaderDrivenPorts} from "../ports/user-service-reader-driven.ports";
 import {AxiosInstance} from "axios";
 import {ApiEngine} from "../../../engines/api-engine";
-import {ApiEngineConfigDTO} from "../../../engines/api-engine/api-engine-config.dto";
 import EventbusEngine from "../../../engines/eventbus-engine";
 import {UserServiceResourceConstants} from "../core/constants/user-service-resource.constants";
 import {UserServiceEventTypeConstants} from "../core/constants/user-service-event-type.constants";
 import {UserServiceAuthConstants} from "../core/constants/user-service-auth.constants";
+import type {ApiEngineConfigDTO} from "../../../engines/api-engine/api-engine-config.dto";
 import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
-import {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
+import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 
 export function UserServiceApiReaderAdapter(): UserServiceReaderDrivenPorts {
 
