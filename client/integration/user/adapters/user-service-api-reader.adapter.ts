@@ -1,5 +1,4 @@
 import type {UserServiceReaderDrivenPorts} from "../ports/user-service-reader-driven.ports";
-import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
 import {AxiosInstance} from "axios";
 import {ApiEngine} from "../../../engines/api-engine";
 import {ApiEngineConfigDTO} from "../../../engines/api-engine/api-engine-config.dto";
@@ -7,6 +6,8 @@ import EventbusEngine from "../../../engines/eventbus-engine";
 import {UserServiceResourceConstants} from "../core/constants/user-service-resource.constants";
 import {UserServiceEventTypeConstants} from "../core/constants/user-service-event-type.constants";
 import {UserServiceAuthConstants} from "../core/constants/user-service-auth.constants";
+import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
+import {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 
 export function UserServiceApiReaderAdapter(): UserServiceReaderDrivenPorts {
 
@@ -22,7 +23,7 @@ export function UserServiceApiReaderAdapter(): UserServiceReaderDrivenPorts {
         try {
             const response = await engine.get(resource);
             const accessToken = response.data[`${UserServiceAuthConstants.ACCESS_TOKEN}`];
-            engine.defaults.headers.common[`${UserServiceAuthConstants.AUTHORIZATION}`] = `Bearer ${accessToken}`;
+            engine.defaults.headers.common[`${UserServiceAuthConstants.AUTHORIZATION}`] = `${UserServiceAuthConstants.BEARER} ${accessToken}`;
             return response.data;
         } catch (error) {
             return null;
@@ -30,7 +31,17 @@ export function UserServiceApiReaderAdapter(): UserServiceReaderDrivenPorts {
 
     }
 
+    async function getUserInfo(resource: string): Promise<ResponseUserAuthDTO | null> {
+        try {
+            const response = await engine.get(resource);
+            return response.data;
+        } catch (error) {
+            return null;
+        }
+    }
+
     return {
-      refresh
+      refresh,
+      getUserInfo
     };
 }

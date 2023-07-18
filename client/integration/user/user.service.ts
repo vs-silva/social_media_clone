@@ -11,6 +11,8 @@ import type {ResponseTokenRefreshDTO} from "../../../server/business/token/core/
 
 export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserServiceReaderDrivenPorts):UserServiceDriverPort {
 
+    const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
+
     async function signup(dto: RequestUserRegisterDTO): Promise<ResponseUserRegisterDTO | null> {
 
         const result = await writer.register(dto, UserServiceResourceConstants.REGISTER);
@@ -36,8 +38,6 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
 
     async function refreshToken(accessToken: string): Promise<ResponseTokenRefreshDTO | null> {
 
-        const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
-
         if(!tokenRegex.test(accessToken)) {
             return null;
         }
@@ -51,9 +51,26 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
         return result;
     }
 
+    async function getUser(accessToken: string): Promise<ResponseUserAuthDTO | null> {
+
+        if(!tokenRegex.test(accessToken)) {
+            return null;
+        }
+
+        const result = await reader.getUserInfo(UserServiceResourceConstants.USER);
+
+        if(!result) {
+            return null;
+        }
+
+        return result;
+
+    }
+
     return {
         signup,
         login,
-        refreshToken
+        refreshToken,
+        getUser
     };
 }
