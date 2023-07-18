@@ -3,12 +3,10 @@ import {faker} from "@faker-js/faker";
 import User from "../index";
 import type {RequestUserRegisterDTO} from "../../../../server/business/user/core/dtos/request-user-register.dto";
 import type {ResponseUserRegisterDTO} from "../../../../server/business/user/core/dtos/response-user-register.dto";
-import type{RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
+import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
-import {
-    UserServiceDecodeAccessTokenDTO
-} from "~/client/integration/user/core/dtos/user-service-decode-access-token.dto";
+import type {UserServiceDecodeAccessTokenDTO} from "../core/dtos/user-service-decode-access-token.dto";
 
 describe('Integration: User service tests', () => {
 
