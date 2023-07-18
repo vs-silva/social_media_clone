@@ -6,6 +6,9 @@ import type {ResponseUserRegisterDTO} from "../../../../server/business/user/cor
 import type{RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/core/dtos/response-token-refresh.dto";
+import {
+    UserServiceDecodeAccessTokenDTO
+} from "~/client/integration/user/core/dtos/user-service-decode-access-token.dto";
 
 describe('Integration: User service tests', () => {
 
@@ -211,6 +214,50 @@ describe('Integration: User service tests', () => {
 
         });
 
+
+    });
+
+    describe('decodeAccessToken port tests', () => {
+
+        it('should return a UserServiceDecodeAccessTokenDTO if provided accessToken is valid', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            const registeredUser = await User.signup(fakeNewUser);
+
+            const loginPayload:RequestUserAuthDTO = {
+                username: registeredUser?.username as string,
+                password: fakeNewUser.password
+            };
+
+            const loggedInUser = await User.login(loginPayload);
+
+            const spy = vi.spyOn(User, 'decodeAccessToken');
+            const result = await User.decodeAccessToken(loggedInUser?.accessToken as string);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(loggedInUser?.accessToken as string);
+
+            expect(result).toStrictEqual(expect.objectContaining(<UserServiceDecodeAccessTokenDTO>{
+                userId: expect.any(String),
+                issuedAt: expect.any(Number),
+                expiresAt: expect.any(Number),
+                renewCountTimer: expect.any(Number)
+            }));
+
+        });
+
+        it('should return a null if provided accessToken is invalid', async () => {
+
+            const fakeAccessToken = faker.word.sample(20);
+
+            const spy = vi.spyOn(User, 'decodeAccessToken');
+            const result = await User.decodeAccessToken(fakeAccessToken);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
+
+            expect(result).toBeNull();
+        });
 
     });
 
