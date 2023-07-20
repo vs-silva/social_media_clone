@@ -164,7 +164,7 @@ describe('User store tests', () => {
             };
 
             await login(registeredUser);
-            expect((user.value as ResponseUserAuthDTO).accessToken).toBeTruthy();
+            expect((user.value as ResponseUserAuthDTO)?.accessToken as string).toBeTruthy();
 
             const spy = vi.fn(renewAccessToken);
             await spy();
@@ -206,7 +206,7 @@ describe('User store tests', () => {
             };
 
             await login(registeredUser);
-            const initialAccessToken = (user.value as ResponseUserAuthDTO).accessToken as string;
+            const initialAccessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
             expect(initialAccessToken.trim()).toBeTruthy();
 
             const spy = vi.fn(refreshToken);
@@ -235,7 +235,7 @@ describe('User store tests', () => {
             };
 
             await login(registeredUser);
-            const accessToken = (user.value as ResponseUserAuthDTO).accessToken as string
+            const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string
             await refreshToken(accessToken);
 
             const spy = vi.fn(getUser);
