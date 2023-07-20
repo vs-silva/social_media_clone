@@ -23,21 +23,20 @@ describe('User store tests', () => {
         name: `${faker.person.firstName()} ${faker.person.lastName()}`
     };
 
+    const { user } = storeToRefs(userStore);
+    const { refreshToken,login, signup, renewAccessToken, getUser } = userStore;
+
+    beforeAll(() => {
+        user.value = null;
+    });
+
     describe('signup port tests', () => {
 
-        const { user } = storeToRefs(userStore);
-
-        beforeAll(() => {
-           user.value = null;
-        });
-
         it('sign up should take RequestUserRegisterDTO, perform the user registration', async () => {
-
 
             expect(user).toBeDefined();
             expect(user.value).toBeNull();
 
-            const { signup } = userStore;
             expect(signup).toBeDefined();
             expect(signup).toBeInstanceOf(Function);
 
@@ -66,17 +65,8 @@ describe('User store tests', () => {
 
     describe('login port tests', () => {
 
-        const { user } = storeToRefs(userStore);
-
-        beforeAll(() => {
-            user.value = null;
-        });
-
         it('login should take a RequestUserAuthDTO and allow a registered user to access the application by providing a accessToken', async () => {
 
-            const { user } = storeToRefs(userStore);
-
-            const { login, signup } = userStore;
             expect(login).toBeDefined();
             expect(login).toBeInstanceOf(Function);
 
@@ -108,15 +98,11 @@ describe('User store tests', () => {
 
     describe('renewAccessToken port tests', () => {
 
-        const { user } = storeToRefs(userStore);
-
         beforeAll(() => {
-            user.value = null;
+           user.value = null;
         });
 
         it('renewAccessToken should return if ref user.value is null', async () => {
-
-            const { renewAccessToken } = userStore;
 
             expect(renewAccessToken).toBeDefined();
             expect(renewAccessToken).toBeInstanceOf(Function);
@@ -134,8 +120,6 @@ describe('User store tests', () => {
 
         it('renewAccessToken should return if accessToken is not present in ref user.value', async () => {
 
-            const { renewAccessToken, signup } = userStore;
-
             fakeNewUser.username = faker.internet.userName();
             await signup(fakeNewUser);
 
@@ -152,8 +136,6 @@ describe('User store tests', () => {
         });
 
         it('renewAccessToken should ask for user accessToken renew', async () => {
-
-            const { renewAccessToken, login, signup } = userStore;
 
             fakeNewUser.username = faker.internet.userName();
             await signup(fakeNewUser);
@@ -176,9 +158,6 @@ describe('User store tests', () => {
     });
 
     describe('refreshToken port tests', () => {
-
-        const { user } = storeToRefs(userStore);
-        const { refreshToken,login, signup} = userStore;
 
         it('refreshToken should return null if invalid accessToken is provided', async () => {
 
@@ -220,9 +199,6 @@ describe('User store tests', () => {
     });
 
     describe('getUser port test', () => {
-
-        const { user } = storeToRefs(userStore);
-        const { refreshToken,login, signup, getUser } = userStore;
 
         it('getUser should should update ref user.value by returning a ResponseUserAuthDTO', async () => {
 
