@@ -24,7 +24,7 @@ describe('Integration: User service tests', () => {
 
     describe('signup port tests', () => {
 
-        it('signup should take a RequestUserAuthDTO create a new user and return a ResponseUserRegisterDTO', async () => {
+        it('signup should take a RequestUserRegisterDTO create a new user and return a ResponseUserRegisterDTO', async () => {
 
             fakeNewUser.username = faker.internet.userName();
 
