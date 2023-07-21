@@ -14,33 +14,30 @@ describe('Integration: Tweet service tests', () => {
     const idRegex = /\b[0-9a-f]{24}\b/;
     const fakePassword = faker.internet.password();
 
-    const fakeNewUser: RequestUserRegisterDTO = {
-        email: faker.internet.email(),
-        password: fakePassword,
-        repeatPassword: fakePassword,
-        username: faker.internet.userName(),
-        name: `${faker.person.firstName()} ${faker.person.lastName()}`
-    };
-
-
     describe('submitTweet port tests', () => {
 
-        let loggedUser: ResponseUserAuthDTO | null;
 
-        beforeAll(async () => {
+        it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
+
+            const fakeNewUser: RequestUserRegisterDTO = {
+                email: faker.internet.email(),
+                password: fakePassword,
+                repeatPassword: fakePassword,
+                username: faker.internet.userName(),
+                name: `${faker.person.firstName()} ${faker.person.lastName()}`
+            };
 
             const registeredUser = await User.signup(fakeNewUser);
+            expect(registeredUser?.username).toBeDefined();
 
-            loggedUser = await User.login(<RequestUserAuthDTO>{
+            const loggedUser = await User.login(<RequestUserAuthDTO>{
                 username: registeredUser?.username,
                 password: fakePassword
             });
 
-        });
-
-        it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
-
             expect(loggedUser).toBeDefined();
+            expect(loggedUser?.accessToken).toBeDefined();
+
             await User.refreshToken(loggedUser?.accessToken as string);
 
             const blob = new Blob([faker.image.url()]);

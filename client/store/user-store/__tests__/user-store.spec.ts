@@ -246,37 +246,51 @@ describe('User store tests', async () => {
 
     });
 
-});
 
-/*
-describe('User store tests', () => {
+    describe('getUser port tests', () => {
 
+        beforeAll(async () => {
+            fakeNewUser.username = faker.internet.userName();
+            user.value = null;
 
-    it('getUser should update ref user by returning a ResponseUserAuthDTO', async () => {
+            await signup(fakeNewUser);
+            await login({
+                username: fakeNewUser.username,
+                password: fakePassword
+            });
+        });
 
-        const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
+        it('getUser should update ref user by returning a ResponseUserAuthDTO', async () => {
 
-        expect(getUser).toBeDefined();
-        expect(getUser).toBeInstanceOf(Function);
+            expect(user.value).toBeDefined();
+            const userAccessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
+            expect(userAccessToken).toBeTruthy();
 
-        const spy = vi.fn(getUser);
-        await spy(accessToken);
+            expect(getUser).toBeDefined();
+            expect(getUser).toBeInstanceOf(Function);
 
-        expect(spy).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith(accessToken);
+            const spy = vi.fn(getUser);
+            await spy(userAccessToken);
 
-        expect(user.value).toStrictEqual(expect.objectContaining(<ResponseUserAuthDTO>{
-            id: expect.any(String),
-            email: expect.any(String),
-            username: expect.any(String),
-            profileImage: expect.any(String),
-            profileCreateDate: expect.any(String),
-            profileLastUpdateDate: expect.any(String),
-            accessToken: expect.any(String)
-        }));
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(userAccessToken);
 
+            expect(user.value).toStrictEqual(expect.objectContaining(<ResponseUserAuthDTO>{
+                id: expect.any(String),
+                email: expect.any(String),
+                username: expect.any(String),
+                profileImage: expect.any(String),
+                profileCreateDate: expect.any(String),
+                profileLastUpdateDate: expect.any(String),
+                accessToken: expect.any(String)
+            }));
+
+        }, {retry: retries});
+
+        afterAll(() => {
+            user.value = null;
+        });
     });
 
-
 });
-*/
+
