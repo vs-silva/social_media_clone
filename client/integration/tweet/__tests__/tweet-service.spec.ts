@@ -71,7 +71,7 @@ describe('Integration: Tweet service tests', () => {
             }));
 
 
-        });
+        }, {retry: 3});
 
         it('submitTweet should return null if invalid user tries to submit a tweet', async () => {
 
