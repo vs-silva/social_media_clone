@@ -6,7 +6,6 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
-import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 
 
 describe('Integration: Tweet service tests', () => {
