@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeAll} from "vitest";
+import {describe, it, expect, vi, afterAll} from "vitest";
 import {faker} from "@faker-js/faker";
 import {createPinia, setActivePinia} from "pinia";
 import {storeToRefs} from "pinia";
@@ -25,6 +25,10 @@ describe('User store tests', () => {
 
     const { user } = storeToRefs(userStore);
     const { refreshToken,login, signup, renewAccessToken, getUser } = userStore;
+
+    afterAll(() => {
+       user.value = null;
+    });
 
     describe('signup port tests', () => {
 
@@ -142,7 +146,6 @@ describe('User store tests', () => {
    });
 
 
-
     describe('refreshToken port tests', () => {
 
         it('refreshToken should return null if no accessToken is provided', async () => {
@@ -194,23 +197,14 @@ describe('User store tests', () => {
 
     });
 
-    /*
-
     describe('getUser port test', () => {
 
-        it('getUser should should update ref user.value by returning a ResponseUserAuthDTO', async () => {
+        it('getUser should should update ref user by returning a ResponseUserAuthDTO', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
-            await signup(fakeNewUser);
+            const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
 
-            const registeredUser: RequestUserAuthDTO = {
-                username: user.value?.username as string,
-                password: fakePassword
-            };
-
-            await login(registeredUser);
-            const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string
-            await refreshToken(accessToken);
+            expect(getUser).toBeDefined();
+            expect(getUser).toBeInstanceOf(Function);
 
             const spy = vi.fn(getUser);
             await spy(accessToken);
@@ -231,5 +225,4 @@ describe('User store tests', () => {
         });
 
     });
- */
 });

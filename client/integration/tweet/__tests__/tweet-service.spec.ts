@@ -7,6 +7,7 @@ import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dto
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
 
+
 describe('Integration: Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
@@ -35,21 +36,17 @@ describe('Integration: Tweet service tests', () => {
             };
 
             const loggedInUser = await User.login(requestPayload);
-            await User.refreshToken(loggedInUser?.accessToken as string);
+            const accessToken = loggedInUser?.accessToken as string;
+            expect(accessToken).toMatch(tokenRegex);
 
-            const blobParts = [
-                new Blob(['Hello'], { type: 'text/plain' }),
-                'World',
-                new Uint8Array([1, 2, 3])
-            ];
+            await User.refreshToken(accessToken);
 
-            const blob = new Blob([faker.image.url()], { type: 'image/jpeg' });
-            const file = new File([blob], 'example.jpg', { type: 'image/jpeg' });
+            const blob = new Blob([faker.image.url()]);
 
             const fakeTweet: RequestTweetCreateDTO = {
               userId: loggedInUser?.id as string,
               text: faker.word.words(3),
-              mediaFiles: [file]
+              mediaFiles: [new File([blob], 'testImage.jpg')]
             };
 
             const spy = vi.spyOn(Tweet, 'submitTweet');
