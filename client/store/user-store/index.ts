@@ -18,36 +18,46 @@ export function UserStore() {
 
     async function login(dto: RequestUserAuthDTO): Promise<void> {
         user.value = await User.login(dto) as ResponseUserAuthDTO;
-        await renewAccessToken();
+        await renewAccessToken((user.value as ResponseUserAuthDTO).accessToken);
     }
 
-    async function renewAccessToken(): Promise<void> {
+    async function renewAccessToken(accessToken: string): Promise<void> {
 
-        if(!user.value || !(user.value as ResponseUserAuthDTO).accessToken?.trim()) {
+        if(!accessToken) {
             return;
         }
 
-        const result = await User.decodeAccessToken((user.value as ResponseUserAuthDTO).accessToken);
+        const result = await User.decodeAccessToken(accessToken);
 
         setTimeout(async () => {
-            await refreshToken((user.value as ResponseUserAuthDTO).accessToken);
+            await refreshToken(accessToken);
         }, result?.renewCountTimer);
     }
 
     async function getUser(accessToken: string): Promise<void> {
+
+        if(!accessToken) {
+            return;
+        }
+
         user.value = await User.getUser(accessToken) as ResponseUserAuthDTO;
     }
 
     async function refreshToken(accessToken: string): Promise<void> {
+
+        if(!accessToken) {
+            return;
+        }
+
         const result = await User.refreshToken(accessToken);
 
         if(!result) {
             return;
         }
 
-        (user.value as ResponseUserAuthDTO).accessToken = result.accessToken;
-        await getUser(accessToken);
-        await renewAccessToken();
+        (user.value as ResponseUserAuthDTO).accessToken = result?.accessToken;
+        await getUser(result?.accessToken);
+        await renewAccessToken(result?.accessToken);
 
     }
 

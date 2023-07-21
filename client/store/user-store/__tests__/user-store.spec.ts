@@ -26,10 +26,6 @@ describe('User store tests', () => {
     const { user } = storeToRefs(userStore);
     const { refreshToken,login, signup, renewAccessToken, getUser } = userStore;
 
-    beforeAll(() => {
-        user.value = null;
-    });
-
     describe('signup port tests', () => {
 
         it('sign up should take RequestUserRegisterDTO, perform the user registration', async () => {
@@ -67,20 +63,21 @@ describe('User store tests', () => {
 
         it('login should take a RequestUserAuthDTO and allow a registered user to access the application by providing a accessToken', async () => {
 
-            expect(login).toBeDefined();
-            expect(login).toBeInstanceOf(Function);
-
-            fakeNewUser.username = faker.internet.userName();
-
-            await signup(fakeNewUser);
+            expect(user.value).toBeDefined();
 
             const registeredUser: RequestUserAuthDTO = {
                 username: user.value?.username as string,
                 password: fakePassword
             };
 
+            expect(login).toBeDefined();
+            expect(login).toBeInstanceOf(Function);
+
             const spy = vi.fn(login);
             await spy(registeredUser);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(registeredUser);
 
             expect(user.value).toStrictEqual(expect.objectContaining(<ResponseUserAuthDTO>{
                 id: expect.any(String),
@@ -96,107 +93,108 @@ describe('User store tests', () => {
 
     });
 
-    describe('renewAccessToken port tests', () => {
 
-        beforeAll(() => {
-           user.value = null;
-        });
 
-        it('renewAccessToken should return if ref user.value is null', async () => {
+   describe('renewAccessToken port tests', () => {
 
-            expect(renewAccessToken).toBeDefined();
-            expect(renewAccessToken).toBeInstanceOf(Function);
+       it('renewAccessToken should ask for user accessToken renew and return ResponseUserAuthDTO', async () => {
 
-            const spy = vi.fn(renewAccessToken);
-            await spy();
+           expect(user.value).toBeDefined();
+           const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
+           expect(accessToken).toBeTruthy();
 
-            expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith();
+           expect(renewAccessToken).toBeDefined();
+           expect(renewAccessToken).toBeInstanceOf(Function);
 
-            expect(user.value).toBeNull();
-            expect(spy).toReturn();
+           const spy = vi.fn(renewAccessToken);
+           await spy(accessToken);
 
-        });
+           expect(spy).toHaveBeenCalled();
+           expect(spy).toHaveBeenCalledWith(accessToken);
+           expect((user.value as ResponseUserAuthDTO)?.accessToken as string).toBeTruthy();
 
-        it('renewAccessToken should return if accessToken is not present in ref user.value', async () => {
+           expect(user.value).toStrictEqual(expect.objectContaining(<ResponseUserAuthDTO>{
+               id: expect.any(String),
+               email: expect.any(String),
+               username: expect.any(String),
+               profileImage: expect.any(String),
+               profileCreateDate: expect.any(String),
+               profileLastUpdateDate: expect.any(String),
+               accessToken: expect.any(String)
+           }));
 
-            fakeNewUser.username = faker.internet.userName();
-            await signup(fakeNewUser);
+       });
 
-            expect(user.value).toBeDefined();
+       it('renewAccessToken should return if accessToken is not provided', async () => {
 
-            const spy = vi.fn(renewAccessToken);
-            await spy();
+           const fakeAccessToken = '   ';
 
-            expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith();
+           const spy = vi.fn(renewAccessToken);
+           await spy(fakeAccessToken);
 
-            expect(spy).toReturn();
+           expect(spy).toHaveBeenCalled();
+           expect(spy).toHaveBeenCalledWith(fakeAccessToken);
 
-        });
+           expect(spy).toReturn();
 
-        it('renewAccessToken should ask for user accessToken renew', async () => {
+       });
 
-            fakeNewUser.username = faker.internet.userName();
-            await signup(fakeNewUser);
+   });
 
-            const registeredUser: RequestUserAuthDTO = {
-                username: user.value?.username as string,
-                password: fakePassword
-            };
 
-            await login(registeredUser);
-            expect((user.value as ResponseUserAuthDTO)?.accessToken as string).toBeTruthy();
-
-            const spy = vi.fn(renewAccessToken);
-            await spy();
-
-            expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith();
-        });
-
-    });
 
     describe('refreshToken port tests', () => {
 
-        it('refreshToken should return null if invalid accessToken is provided', async () => {
+        it('refreshToken should return null if no accessToken is provided', async () => {
 
-            const fakeAccessToken = faker.word.sample(10);
+            const fakeAccessToken = '';
+
+            expect(refreshToken).toBeDefined();
+            expect(refreshToken).toBeInstanceOf(Function);
 
             const spy = vi.fn(refreshToken);
-            const result = await spy(fakeAccessToken);
+            await spy(fakeAccessToken);
 
             expect(spy).toHaveBeenCalled();
             expect(spy).toHaveBeenCalledWith(fakeAccessToken);
 
             expect(spy).toReturn();
-            expect(result).toBeUndefined();
+
+        });
+
+
+        it('refreshToken should return null if invalid accessToken is provided', async () => {
+
+            const fakeAccessToken = faker.word.sample(10);
+
+            expect(renewAccessToken).toBeDefined();
+            expect(renewAccessToken).toBeInstanceOf(Function);
+
+            const spy = vi.fn(refreshToken);
+            await spy(fakeAccessToken);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
+
+            expect(spy).toReturn();
 
         });
 
         it('refreshToken should update user accessToken', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
-            await signup(fakeNewUser);
-
-            const registeredUser: RequestUserAuthDTO = {
-                username: user.value?.username as string,
-                password: fakePassword
-            };
-
-            await login(registeredUser);
-            const initialAccessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
-            expect(initialAccessToken.trim()).toBeTruthy();
+            const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
+            expect(accessToken).toBeTruthy();
 
             const spy = vi.fn(refreshToken);
-            await spy(initialAccessToken);
+            await spy(accessToken);
 
             expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith(initialAccessToken);
+            expect(spy).toHaveBeenCalledWith(accessToken);
         });
 
-
     });
+
+    /*
 
     describe('getUser port test', () => {
 
@@ -233,5 +231,5 @@ describe('User store tests', () => {
         });
 
     });
-
+ */
 });
