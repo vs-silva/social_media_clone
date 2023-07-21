@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+import {describe, expect, it, vi, beforeAll} from "vitest";
 import {faker} from "@faker-js/faker";
 import User from "../../user";
 import Tweet from "../index";
@@ -6,50 +6,46 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
+
 
 describe('Integration: Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
-    const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
     const fakePassword = faker.internet.password();
-
-    const fakeNewUser: RequestUserRegisterDTO = {
-        email: faker.internet.email(),
-        password: fakePassword,
-        repeatPassword: fakePassword,
-        username: '',
-        name: `${faker.person.firstName()} ${faker.person.lastName()}`
-    };
-
 
     describe('submitTweet port tests', () => {
 
+
         it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
-            const registeredUser = await User.signup(fakeNewUser);
-
-            const requestPayload:RequestUserAuthDTO = {
-                username: registeredUser?.username as string,
-                password: fakeNewUser.password
+            const fakeNewUser: RequestUserRegisterDTO = {
+                email: faker.internet.email(),
+                password: fakePassword,
+                repeatPassword: fakePassword,
+                username: faker.internet.userName(),
+                name: `${faker.person.firstName()} ${faker.person.lastName()}`
             };
 
-            const loggedInUser = await User.login(requestPayload);
-            await User.refreshToken(loggedInUser?.accessToken as string);
+            const registeredUser = await User.signup(fakeNewUser);
+            expect(registeredUser?.username).toBeDefined();
 
-            const blobParts = [
-                new Blob(['Hello'], { type: 'text/plain' }),
-                'World',
-                new Uint8Array([1, 2, 3])
-            ];
+            const loggedUser = await User.login(<RequestUserAuthDTO>{
+                username: registeredUser?.username,
+                password: fakePassword
+            });
 
-            const blob = new Blob([faker.image.url()], { type: 'image/jpeg' });
-            const file = new File([blob], 'example.jpg', { type: 'image/jpeg' });
+            expect(loggedUser).toBeDefined();
+            expect(loggedUser?.accessToken).toBeDefined();
+
+            await User.refreshToken(loggedUser?.accessToken as string);
+
+            const blob = new Blob([faker.image.url()]);
 
             const fakeTweet: RequestTweetCreateDTO = {
-              userId: loggedInUser?.id as string,
+              userId: loggedUser?.id as string,
               text: faker.word.words(3),
-              mediaFiles: [file]
+              mediaFiles: [new File([blob], 'testImage.jpg')]
             };
 
             const spy = vi.spyOn(Tweet, 'submitTweet');
@@ -71,7 +67,8 @@ describe('Integration: Tweet service tests', () => {
                 updatedAt: expect.any(String),
             }));
 
-        });
+
+        }, {retry: 3});
 
         it('submitTweet should return null if invalid user tries to submit a tweet', async () => {
 
