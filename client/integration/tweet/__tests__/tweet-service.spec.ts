@@ -12,7 +12,6 @@ import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dt
 describe('Integration: Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
-    const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
     const fakePassword = faker.internet.password();
 
     const fakeNewUser: RequestUserRegisterDTO = {
@@ -70,7 +69,7 @@ describe('Integration: Tweet service tests', () => {
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
             }));
-           
+
 
         });
 
