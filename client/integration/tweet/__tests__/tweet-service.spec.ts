@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+import {describe, expect, it, vi, beforeAll} from "vitest";
 import {faker} from "@faker-js/faker";
 import User from "../../user";
 import Tweet from "../index";
@@ -6,6 +6,7 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 
 
 describe('Integration: Tweet service tests', () => {
@@ -18,33 +19,35 @@ describe('Integration: Tweet service tests', () => {
         email: faker.internet.email(),
         password: fakePassword,
         repeatPassword: fakePassword,
-        username: '',
+        username: faker.internet.userName(),
         name: `${faker.person.firstName()} ${faker.person.lastName()}`
     };
 
 
     describe('submitTweet port tests', () => {
 
-        it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
+        let loggedUser: ResponseUserAuthDTO | null;
 
-            fakeNewUser.username = faker.internet.userName();
+        beforeAll(async () => {
+
             const registeredUser = await User.signup(fakeNewUser);
 
-            const requestPayload:RequestUserAuthDTO = {
-                username: registeredUser?.username as string,
-                password: fakeNewUser.password
-            };
+            loggedUser = await User.login(<RequestUserAuthDTO>{
+                username: registeredUser?.username,
+                password: fakePassword
+            });
 
-            const loggedInUser = await User.login(requestPayload);
-            const accessToken = loggedInUser?.accessToken as string;
-            expect(accessToken).toMatch(tokenRegex);
+        });
 
-            await User.refreshToken(accessToken);
+        it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
+
+            expect(loggedUser).toBeDefined();
+            await User.refreshToken(loggedUser?.accessToken as string);
 
             const blob = new Blob([faker.image.url()]);
 
             const fakeTweet: RequestTweetCreateDTO = {
-              userId: loggedInUser?.id as string,
+              userId: loggedUser?.id as string,
               text: faker.word.words(3),
               mediaFiles: [new File([blob], 'testImage.jpg')]
             };
@@ -67,6 +70,7 @@ describe('Integration: Tweet service tests', () => {
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
             }));
+           
 
         });
 
