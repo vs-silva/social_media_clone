@@ -15,15 +15,18 @@
           </div>
 
           <!-- main content -->
-          <!--<main class="col-span-12 md:col-span-8 xl:col-span-6 bg-red-500">
+          <main class="col-span-12 md:col-span-8 xl:col-span-6 bg-red-500">
             <h1>abc</h1>
-          </main> -->
+          </main>
 
           <!-- right sidebar -->
 
-          <div class="col-span-12 md:block xl:col-span-4 md:col-span-3 bg-green-500">
+          <div class="hidden col-span-12 md:block xl:col-span-4 md:col-span-3">
             <div class="sticky top-0">
-              <right-sidebar-component />
+              <right-sidebar-component
+                :trends="trendingItems"
+                :peopleTrends="peopleItems"
+              />
             </div>
           </div>
 
@@ -38,9 +41,25 @@
 
 <script setup lang="ts">
 import {ref} from "@vue/runtime-core";
+import Store from "./client/store";
+import {storeToRefs} from "pinia";
 import LeftSidebarComponent from "./components/left-sidebar-component/index.vue";
 import RightSidebarComponent from "./components/right-sidebar-component/index.vue";
 
 const darkMode = ref<boolean>(false);
+
+const {useTrendingStore, usePeopleStore} = Store;
+
+const trendingStore = useTrendingStore();
+const peopleStore = usePeopleStore();
+
+const { trendingItems } = storeToRefs(trendingStore);
+const { getAllTrendingItems } = trendingStore;
+
+const { peopleItems } = storeToRefs(peopleStore);
+const { getAllPeopleToFollow } = peopleStore;
+
+getAllTrendingItems();
+getAllPeopleToFollow();
 
 </script>
