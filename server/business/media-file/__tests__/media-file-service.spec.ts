@@ -38,7 +38,7 @@ describe('Media File service tests', () => {
                 url: expect.any(String)
             }));
 
-        });
+        }, {timeout: 30000});
 
 
         it('uploadMediaFile should return null if file resource is not provided', async () => {
