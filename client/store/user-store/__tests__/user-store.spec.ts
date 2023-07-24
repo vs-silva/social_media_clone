@@ -196,49 +196,20 @@ describe('User store tests', () => {
         it('refreshToken should update user accessToken', async () => {
 
             expect(user.value).toBeDefined();
-            const accessToken = (user.value as ResponseUserAuthDTO)?.accessToken as string;
-            expect(accessToken).toBeTruthy();
 
             expect(refreshToken).toBeDefined();
             expect(refreshToken).toBeInstanceOf(Function);
 
             const spy = vi.fn(refreshToken);
-            await spy(accessToken);
+            await spy();
 
             expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith(accessToken);
+            expect(spy).toHaveBeenCalledWith();
 
             expect(user.value).toBeDefined();
             expect((user.value as ResponseUserAuthDTO)?.accessToken).toBeTruthy();
 
         }, {retry: retries});
-
-        it('refreshToken should return null if invalid accessToken is provided', async () => {
-
-            const fakeAccessToken = faker.word.sample(10);
-
-            const spy = vi.fn(refreshToken);
-            await spy(fakeAccessToken);
-
-            expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
-
-            expect(spy).toReturn();
-
-        });
-
-        it('refreshToken should return null if no accessToken is provided', async () => {
-
-            const fakeAccessToken:string = '';
-
-            const spy = vi.fn(refreshToken);
-            await spy(fakeAccessToken);
-
-            expect(spy).toHaveBeenCalled();
-            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
-
-            expect(spy).toReturn();
-        });
 
         afterAll(() => {
             user.value = null;

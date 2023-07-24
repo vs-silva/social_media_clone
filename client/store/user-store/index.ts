@@ -18,7 +18,6 @@ export function UserStore() {
 
     async function login(dto: RequestUserAuthDTO): Promise<void> {
         user.value = await User.login(dto) as ResponseUserAuthDTO;
-        await renewAccessToken((user.value as ResponseUserAuthDTO).accessToken);
     }
 
     async function renewAccessToken(accessToken: string): Promise<void> {
@@ -30,7 +29,7 @@ export function UserStore() {
         const result = await User.decodeAccessToken(accessToken);
 
         setTimeout(async () => {
-            await refreshToken(accessToken);
+            await refreshToken();
         }, result?.renewCountTimer);
     }
 
@@ -43,22 +42,16 @@ export function UserStore() {
         user.value = await User.getUser(accessToken) as ResponseUserAuthDTO;
     }
 
-    async function refreshToken(accessToken: string): Promise<void> {
+    async function refreshToken(): Promise<void> {
 
-        if(!accessToken) {
-            return;
-        }
-
-        const result = await User.refreshToken(accessToken);
+        const result = await User.refreshToken();
 
         if(!result) {
             return;
         }
 
-        (user.value as ResponseUserAuthDTO).accessToken = result?.accessToken;
         await getUser(result?.accessToken);
         await renewAccessToken(result?.accessToken);
-
     }
 
     return {

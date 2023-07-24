@@ -1,4 +1,4 @@
-import {describe, expect, it, vi, beforeAll} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {faker} from "@faker-js/faker";
 import User from "../../user";
 import Tweet from "../index";
@@ -6,7 +6,6 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
-
 
 describe('Integration: Tweet service tests', () => {
 
@@ -37,7 +36,7 @@ describe('Integration: Tweet service tests', () => {
             expect(loggedUser).toBeDefined();
             expect(loggedUser?.accessToken).toBeDefined();
 
-            await User.refreshToken(loggedUser?.accessToken as string);
+            await User.refreshToken();
 
             const blob = new Blob([faker.image.url()]);
 

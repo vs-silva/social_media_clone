@@ -132,10 +132,10 @@ describe('Integration: User service tests', () => {
             expect(loggedInUser?.accessToken).toBeTruthy();
 
             const spy = vi.spyOn(User, 'refreshToken');
-            const result = await User.refreshToken(loggedInUser?.accessToken as string);
+            const result = await User.refreshToken();
 
             expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(loggedInUser?.accessToken);
+            expect(spy).toHaveBeenCalledWith();
             expect(result).toBeTruthy();
 
             expect(result?.userId).toMatch(idRegex);
@@ -146,19 +146,6 @@ describe('Integration: User service tests', () => {
                 accessToken: expect.any(String),
             }));
 
-        });
-
-        it('refreshToken should return null for an invalid accessToken', async () => {
-
-            const fakeAccessToken = faker.word.sample(10);
-
-            const spy = vi.spyOn(User, 'refreshToken');
-            const result = await User.refreshToken(fakeAccessToken);
-
-            expect(spy).toHaveBeenCalledWith(fakeAccessToken);
-
-            expect(spy).toHaveBeenCalledOnce();
-            expect(result).toBeNull();
         });
 
     });
@@ -176,7 +163,7 @@ describe('Integration: User service tests', () => {
             };
 
             const loggedInUser = await User.login(loginPayload);
-            await User.refreshToken(loggedInUser?.accessToken as string);
+            await User.refreshToken();
 
             const spy = vi.spyOn(User, 'getUser');
             const result = await User.getUser(loggedInUser?.accessToken as string);

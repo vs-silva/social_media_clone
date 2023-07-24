@@ -38,11 +38,7 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
 
     }
 
-    async function refreshToken(accessToken: string): Promise<ResponseTokenRefreshDTO | null> {
-
-        if(!tokenRegex.test(accessToken)) {
-            return null;
-        }
+    async function refreshToken(): Promise<ResponseTokenRefreshDTO | null> {
 
         const result = await reader.refresh(UserServiceResourceConstants.REFRESH);
 

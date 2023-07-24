@@ -2,7 +2,8 @@
   <div :class="{'dark': darkMode}">
     <div class="bg-white dark:bg-dim-900">
 
-      <div class="min-h-full">
+      <!-- start app -->
+      <div v-if="user" class="min-h-full">
 
         <div class="grid grid-cols-12 mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:gap-5">
 
@@ -33,25 +34,37 @@
         </div>
 
       </div>
+      <!-- end app -->
 
+      <!-- start auth -->
+      <auth-component v-else/>
+
+
+
+      <!-- end auth -->
 
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from "@vue/runtime-core";
+import {ref, onBeforeMount, onDeactivated} from "@vue/runtime-core";
 import Store from "./client/store";
 import {storeToRefs} from "pinia";
 import LeftSidebarComponent from "./components/left-sidebar-component/index.vue";
 import RightSidebarComponent from "./components/right-sidebar-component/index.vue";
+import AuthComponent from "./components/auth-component/index.vue";
+import EventbusEngine from "./client/engines/eventbus-engine";
+import {UserServiceEventTypeConstants} from "./client/integration/user/core/constants/user-service-event-type.constants";
 
 const darkMode = ref<boolean>(false);
+const loading = ref<boolean>(false);
 
-const {useTrendingStore, usePeopleStore} = Store;
+const {useTrendingStore, usePeopleStore, useUserStore} = Store;
 
 const trendingStore = useTrendingStore();
 const peopleStore = usePeopleStore();
+const userStore = useUserStore();
 
 const { trendingItems } = storeToRefs(trendingStore);
 const { getAllTrendingItems } = trendingStore;
@@ -59,7 +72,27 @@ const { getAllTrendingItems } = trendingStore;
 const { peopleItems } = storeToRefs(peopleStore);
 const { getAllPeopleToFollow } = peopleStore;
 
+const { refreshToken } = userStore;
+const { user } = storeToRefs(userStore);
+
 getAllTrendingItems();
 getAllPeopleToFollow();
+
+onBeforeMount(async () => {
+  EventbusEngine.on(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_STARTED, () => {
+    loading.value = true;
+  });
+
+  EventbusEngine.on(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_ENDED, () => {
+    loading.value = false;
+  });
+
+  await refreshToken();
+});
+
+onDeactivated(() => {
+  EventbusEngine.off(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_STARTED);
+  EventbusEngine.off(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_ENDED);
+});
 
 </script>
