@@ -11,6 +11,11 @@ export function TweetStore() {
     const tweet = ref<ResponseTweetCreateDTO | null>(null)
 
     async function submitTweet(dto:  RequestTweetCreateDTO): Promise<void> {
+
+        if(!dto.userId || !dto.text) {
+            return;
+        }
+
         tweet.value = await Tweet.submitTweet(dto);
     }
 

@@ -89,6 +89,26 @@ describe('Tweet store tests', () => {
 
     }, { retry: retries });
 
+    it('submitTweet should return if userId or tweet text are not provided', async () => {
+
+        const blob = new Blob([faker.image.url()]);
+
+        const tweetRequestDTO = <RequestTweetCreateDTO>{
+            userId: '',
+            text: '',
+            mediaFiles:  [new File([blob], 'testImage.jpg')]
+        };
+
+        const spy = vi.fn(submitTweet);
+        await spy(tweetRequestDTO);
+
+        expect(spy).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalledWith(tweetRequestDTO);
+
+        expect(spy).toReturn();
+
+    });
+
     afterAll(async () => {
         user.value = null;
         tweet.value = null;
