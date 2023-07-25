@@ -86,6 +86,24 @@
         </template>
       </left-sidebar-tab-component>
 
+
+      <div class="hidden xl:block">
+        <button-component
+          liquid
+          :size="`lg`"
+        >
+          <span class="font-bold">Tweet</span>
+        </button-component>
+      </div>
+
+      <div class="block xl:hidden">
+        <button-component>
+          <div class="w-6 h-6 font-bold">
+            <pencil-icon />
+          </div>
+        </button-component>
+      </div>
+
     </div>
 
 
@@ -97,8 +115,8 @@ import TwitterLogoComponent from "../twitter-logo-component/index.vue";
 import LeftSidebarTabComponent from "../left-sidebar-tab-component/index.vue";
 import {Transitions} from "../../composables/transitions";
 import {HomeIcon} from "@heroicons/vue/24/solid";
-import {BellIcon, UserIcon, DocumentTextIcon, InboxIcon, BookmarkIcon, HashtagIcon, EllipsisHorizontalCircleIcon} from "@heroicons/vue/24/outline";
-
+import {BellIcon, UserIcon, DocumentTextIcon, InboxIcon, BookmarkIcon, HashtagIcon, EllipsisHorizontalCircleIcon, PencilIcon} from "@heroicons/vue/24/outline";
+import ButtonComponent from "../button-component/index.vue";
 
 </script>
 

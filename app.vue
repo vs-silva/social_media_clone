@@ -2,6 +2,8 @@
   <div :class="{'dark': darkMode}">
     <div class="bg-white dark:bg-dim-900">
 
+      <auth-loading-animation-component v-if="loading"/>
+
       <!-- start app -->
       <div v-if="user" class="min-h-full">
 
@@ -54,6 +56,7 @@ import {storeToRefs} from "pinia";
 import LeftSidebarComponent from "./components/left-sidebar-component/index.vue";
 import RightSidebarComponent from "./components/right-sidebar-component/index.vue";
 import AuthComponent from "./components/auth-component/index.vue";
+import AuthLoadingAnimationComponent from "./components/auth-loading-animation-component/index.vue";
 import EventbusEngine from "./client/engines/eventbus-engine";
 import {UserServiceEventTypeConstants} from "./client/integration/user/core/constants/user-service-event-type.constants";
 
