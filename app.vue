@@ -40,9 +40,6 @@
 
       <!-- start auth -->
       <auth-component v-else/>
-
-
-
       <!-- end auth -->
 
     </div>
@@ -90,12 +87,17 @@ onBeforeMount(async () => {
     loading.value = false;
   });
 
+  EventbusEngine.on(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_FAILED, () => {
+    loading.value = false;
+  });
+
   await refreshToken();
 });
 
 onDeactivated(() => {
   EventbusEngine.off(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_STARTED);
   EventbusEngine.off(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_ENDED);
+  EventbusEngine.off(UserServiceEventTypeConstants.USER_SERVICE_REQUEST_FAILED);
 });
 
 </script>

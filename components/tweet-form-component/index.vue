@@ -9,10 +9,10 @@
       <tweet-form-input-component
           :profileImage="profileImage"
           :textPlaceholder="`What's happening ?`"
-          @submit-tweet="(payload: {tweetText: string, mediaFile: File}) => submitTweet({
+          @submit-tweet="(payload) => submitTweet({
         userId: userId,
-        text: payload.tweetText,
-        mediaFiles: [payload.mediaFile]
+        text: payload?.tweetText as string,
+        mediaFiles: [payload?.mediaFile as File]
       })"
       />
     </div>

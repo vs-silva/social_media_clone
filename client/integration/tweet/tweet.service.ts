@@ -1,6 +1,6 @@
 import type {TweetServiceDriverPorts} from "./ports/tweet-service-driver.ports";
 import type {TweetServiceWriterDrivenPorts} from "./ports/tweet-service-writer-driven.ports";
-import type {ResponseTweetCreateDTO} from "../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../server/business/tweet/core/dtos/response-tweet-dto";
 import type {RequestTweetCreateDTO} from "../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import {TweetServiceFormFieldsConstants} from "./core/constants/tweet-service-form-fields.constants";
 import {TweetServiceResourceConstants} from "./core/constants/tweet-service-resource.constants";
@@ -10,7 +10,7 @@ export function TweetService(writer: TweetServiceWriterDrivenPorts): TweetServic
 
     const idRegex = /\b[0-9a-f]{24}\b/;
 
-    async function submitTweet(dto: RequestTweetCreateDTO): Promise<ResponseTweetCreateDTO | null> {
+    async function submitTweet(dto: RequestTweetCreateDTO): Promise<ResponseTweetDTO | null> {
 
         if(!idRegex.test(dto.userId)) {
             return null;

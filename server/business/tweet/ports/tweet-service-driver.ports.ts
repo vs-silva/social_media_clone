@@ -3,4 +3,5 @@ import type {TweetDTO} from "../core/dtos/tweet.dto";
 
 export interface TweetServiceDriverPorts {
     createTweet(dto: RequestTweetCreateDTO): Promise<TweetDTO | null>;
+    getAllTweets():Promise<TweetDTO[] | null>;
 }

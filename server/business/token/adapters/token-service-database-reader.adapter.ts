@@ -11,8 +11,8 @@ export function TokenServiceDatabaseReaderAdapter(): TokenServiceReaderDrivenPor
 
         try {
 
-            const dbEntity: RefreshToken | null = await engine.refreshToken.findUnique({
-               where: expression()
+            const dbEntity: RefreshToken | null = await engine.refreshToken.findUniqueOrThrow({
+                where: expression()
             });
 
             if(!dbEntity) {

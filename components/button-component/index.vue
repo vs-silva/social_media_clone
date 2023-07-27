@@ -47,7 +47,7 @@ function setPaddingClass(size: string): string {
     lg: 'px-4 py-3'
   };
 
-  return options[size];
+  return options[size as keyof typeof options];
 }
 
 function setFontClass(size: string): string {
@@ -58,7 +58,7 @@ function setFontClass(size: string): string {
     lg: 'text-md'
   };
 
-  return options[size];
+  return options[size as keyof typeof options];
 }
 
 

@@ -1,14 +1,14 @@
 import {ref} from "@vue/runtime-core";
 import Tweet from "../../integration/tweet";
 import type {RequestTweetCreateDTO} from "../../../server/business/tweet/core/dtos/request-tweet-create.dto";
-import type {ResponseTweetCreateDTO} from "../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../server/business/tweet/core/dtos/response-tweet-dto";
 
 
 export const TweetStoreIdentifier = 'tweet-store';
 
 export function TweetStore() {
 
-    const tweet = ref<ResponseTweetCreateDTO | null>(null)
+    const tweet = ref<ResponseTweetDTO | null>(null)
 
     async function submitTweet(dto:  RequestTweetCreateDTO): Promise<void> {
 

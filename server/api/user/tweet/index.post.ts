@@ -10,7 +10,7 @@ import Token from "../../../business/token";
 import type {RequestMediaFileCreateDTO} from "../../../business/media-file/core/dtos/request-media-file-create.dto";
 import type {RequestTweetCreateDTO} from "../../../business/tweet/core/dtos/request-tweet-create.dto";
 import type {MediaFileDTO} from "../../../business/media-file/core/dtos/media-file.dto";
-import type {ResponseTweetCreateDTO} from "../../../business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../business/tweet/core/dtos/response-tweet-dto";
 
 export default defineEventHandler(async (event: H3Event) => {
 
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
                     mediaFileDTO = await MediaFile.createMediaFile(<RequestMediaFileCreateDTO>{
                         userId: tokenDTO.userId,
-                        tweetId: tweetDTO?.userId,
+                        tweetId: tweetDTO?.id,
                         url: mediaFileCloudDTO?.url,
                         providerPublicId: mediaFileCloudDTO?.publicId
                     });
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event: H3Event) => {
         }
 
 
-        return <ResponseTweetCreateDTO> {
+        return <ResponseTweetDTO> {
             id: tweetDTO.id,
             userId: tweetDTO.userId,
             text: tweetDTO.text,
@@ -111,7 +111,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
 
-    return <ResponseTweetCreateDTO> {
+    return <ResponseTweetDTO> {
         id: tweetDTO.id,
         userId: tweetDTO.userId,
         text: tweetDTO.text,

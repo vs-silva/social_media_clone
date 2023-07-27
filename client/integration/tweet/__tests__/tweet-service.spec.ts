@@ -5,7 +5,7 @@ import Tweet from "../index";
 import type {RequestUserRegisterDTO} from "../../../../server/business/user/core/dtos/request-user-register.dto";
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
-import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 
 describe('Integration: Tweet service tests', () => {
 
@@ -15,7 +15,7 @@ describe('Integration: Tweet service tests', () => {
     describe('submitTweet port tests', () => {
 
 
-        it('submitTweet should create a tweet and return a ResponseTweetCreateDTO', async () => {
+        it('submitTweet should create a tweet and return a ResponseTweetDto', async () => {
 
             const fakeNewUser: RequestUserRegisterDTO = {
                 email: faker.internet.email(),
@@ -57,7 +57,7 @@ describe('Integration: Tweet service tests', () => {
             expect(result?.id).toMatch(idRegex);
             expect(result?.text).toEqual(fakeTweet.text);
 
-            expect(result).toStrictEqual(expect.objectContaining(<ResponseTweetCreateDTO> {
+            expect(result).toStrictEqual(expect.objectContaining(<ResponseTweetDTO> {
                 id: expect.any(String),
                 userId: expect.any(String),
                 text: expect.any(String),

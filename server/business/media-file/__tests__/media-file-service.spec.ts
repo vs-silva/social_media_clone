@@ -8,6 +8,23 @@ import type {MediaFileDTO} from "../core/dtos/media-file.dto";
 
 describe('Media File service tests', () => {
 
+    function generateFakeCloudProviderPublicId(): string {
+        const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+
+        while (result.length < 20) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            const randomChar = characters[randomIndex];
+            result += randomChar;
+        }
+
+        if (/^[a-zA-Z0-9]{20}$/.test(result)) {
+            return result;
+        } else {
+            return generateFakeCloudProviderPublicId();
+        }
+    }
+
     describe('uploadMediaFile port tests', () => {
 
         const idRegex = /^[a-fA-F0-9]{32}$/;
@@ -60,23 +77,6 @@ describe('Media File service tests', () => {
     describe('createMediaFile port tests', () => {
 
         const idRegex = /\b[0-9a-f]{24}\b/;
-
-        function generateFakeCloudProviderPublicId(): string {
-            const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-
-            while (result.length < 20) {
-                const randomIndex = Math.floor(Math.random() * characters.length);
-                const randomChar = characters[randomIndex];
-                result += randomChar;
-            }
-
-            if (/^[a-zA-Z0-9]{20}$/.test(result)) {
-                return result;
-            } else {
-                return generateFakeCloudProviderPublicId();
-            }
-        }
 
         let fakeCloudProviderPublicId: string;
 
@@ -139,6 +139,64 @@ describe('Media File service tests', () => {
 
             expect(result).toBeNull();
 
+        });
+
+    });
+
+
+    describe('getMediaFileByTweetId port tests', () => {
+
+        let fakeCloudProviderPublicId: string;
+
+        beforeEach(() => {
+            fakeCloudProviderPublicId = generateFakeCloudProviderPublicId();
+        });
+
+        it('getMediaFileByTweetId should return a MediaFileDTO', async () => {
+
+            const fakeRequestCreateMediaFileDTO: RequestMediaFileCreateDTO = {
+                userId: faker.database.mongodbObjectId(),
+                providerPublicId: fakeCloudProviderPublicId,
+                url: faker.image.url(),
+                tweetId: faker.database.mongodbObjectId()
+            };
+
+            const createdMediaFile = await MediaFile.createMediaFile(fakeRequestCreateMediaFileDTO);
+            expect(createdMediaFile).toBeDefined();
+
+            const spy = vi.spyOn(MediaFile, 'getMediaFileByTweetId');
+            const result = await MediaFile.getMediaFileByTweetId(createdMediaFile?.tweetId as string);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(createdMediaFile?.tweetId as string);
+
+            expect(result).toStrictEqual(expect.objectContaining(<MediaFileDTO>{
+                id: expect.any(String),
+                userId: expect.any(String),
+                tweetId: expect.any(String),
+                providerPublicId: expect.any(String),
+                url: expect.any(String),
+                createAt: expect.any(Date),
+                updatedAt: expect.any(Date)
+            }));
+        });
+
+        it('getMediaFileByTweetId should return null if provided tweetId does not exists', async () => {
+
+            const fakeRequestCreateMediaFileDTO: RequestMediaFileCreateDTO = {
+                userId: faker.database.mongodbObjectId(),
+                providerPublicId: fakeCloudProviderPublicId,
+                url: faker.image.url(),
+                tweetId: ''
+            };
+
+            const spy = vi.spyOn(MediaFile, 'getMediaFileByTweetId');
+            const result = await MediaFile.getMediaFileByTweetId(fakeRequestCreateMediaFileDTO.tweetId as string);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeRequestCreateMediaFileDTO.tweetId);
+
+            expect(result).toBeNull();
         });
 
     });

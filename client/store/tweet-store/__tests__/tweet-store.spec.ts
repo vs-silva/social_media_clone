@@ -7,7 +7,7 @@ import type {RequestUserRegisterDTO} from "../../../../server/business/user/core
 import type {RequestUserAuthDTO} from "../../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dtos/response-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
-import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 
 describe('Tweet store tests', () => {
 
@@ -77,7 +77,7 @@ describe('Tweet store tests', () => {
             expect(spy).toHaveBeenCalled();
             expect(spy).toHaveBeenCalledWith(tweetRequestDTO);
 
-            expect(tweet.value).toStrictEqual(expect.objectContaining(<ResponseTweetCreateDTO>{
+            expect(tweet.value).toStrictEqual(expect.objectContaining(<ResponseTweetDTO>{
                 id: expect.any(String),
                 userId: expect.any(String),
                 text: expect.any(String),
