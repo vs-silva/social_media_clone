@@ -72,7 +72,7 @@ describe('Tweet service tests', () => {
 
             expect(result).toBeDefined();
 
-            expect(result).toStrictEqual(expect.arrayContaining(<TweetDTO[]>[expect.objectContaining(<TweetDTO>{
+           expect(result).toStrictEqual(expect.arrayContaining(<TweetDTO[]>[expect.objectContaining(<TweetDTO>{
                 id: expect.any(String),
                 userId: expect.any(String),
                 text: expect.any(String),

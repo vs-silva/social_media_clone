@@ -8,7 +8,8 @@ export const TweetStoreIdentifier = 'tweet-store';
 
 export function TweetStore() {
 
-    const tweet = ref<ResponseTweetDTO | null>(null)
+    const tweetsCollection = ref<ResponseTweetDTO[] | null>(null);
+    const tweet = ref<ResponseTweetDTO | null>(null);
 
     async function submitTweet(dto:  RequestTweetCreateDTO): Promise<void> {
 
@@ -21,6 +22,7 @@ export function TweetStore() {
 
     return{
         tweet,
+        tweetsCollection,
         submitTweet
     };
 }

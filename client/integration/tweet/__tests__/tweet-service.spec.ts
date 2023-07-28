@@ -12,18 +12,18 @@ describe('Integration: Tweet service tests', () => {
     const idRegex = /\b[0-9a-f]{24}\b/;
     const fakePassword = faker.internet.password();
 
+    const fakeNewUser: RequestUserRegisterDTO = {
+        email: faker.internet.email(),
+        password: fakePassword,
+        repeatPassword: fakePassword,
+        username: faker.internet.userName(),
+        name: `${faker.person.firstName()} ${faker.person.lastName()}`
+    };
+
     describe('submitTweet port tests', () => {
 
 
         it('submitTweet should create a tweet and return a ResponseTweetDto', async () => {
-
-            const fakeNewUser: RequestUserRegisterDTO = {
-                email: faker.internet.email(),
-                password: fakePassword,
-                repeatPassword: fakePassword,
-                username: faker.internet.userName(),
-                name: `${faker.person.firstName()} ${faker.person.lastName()}`
-            };
 
             const registeredUser = await User.signup(fakeNewUser);
             expect(registeredUser?.username).toBeDefined();
@@ -84,6 +84,51 @@ describe('Integration: Tweet service tests', () => {
             expect(result).toBeNull();
 
         });
+
+    });
+
+    describe('getAllTweets port tests', () => {
+
+        it('getAllTweets should return a ResponseTweetDTO[] collection', async () => {
+
+            const user = await User.signup(fakeNewUser);
+            expect(user?.username).toBeDefined();
+
+            const loggedUser = await User.login(<RequestUserAuthDTO>{
+                username: user?.username,
+                password: fakePassword
+            });
+
+            expect(loggedUser).toBeDefined();
+            expect(loggedUser?.accessToken).toBeDefined();
+
+            await User.refreshToken();
+
+            const blob = new Blob([faker.image.url()]);
+
+            const fakeTweet: RequestTweetCreateDTO = {
+                userId: loggedUser?.id as string,
+                text: faker.word.words(3),
+                mediaFiles: [new File([blob], 'testImage.jpg')]
+            };
+
+            await Tweet.submitTweet(fakeTweet);
+
+            const spy = vi.spyOn(Tweet, 'getAllTweets');
+            const result = await Tweet.getAllTweets();
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith();
+
+            expect(result).toStrictEqual(expect.arrayContaining(<ResponseTweetDTO[]>[expect.objectContaining(<ResponseTweetDTO>{
+                id: expect.any(String),
+                userId: expect.any(String),
+                text: expect.any(String),
+                createdAt: expect.any(String),
+                updatedAt: expect.any(String),
+            })]));
+        });
+
 
     });
 });

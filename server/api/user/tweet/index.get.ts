@@ -62,8 +62,7 @@ export default defineEventHandler(async (event: H3Event) => {
               name: author?.name as string,
               username: author?.username as string,
               profileImage: author?.profileImage as string
-          },
-
+          }
         };
     });
 });

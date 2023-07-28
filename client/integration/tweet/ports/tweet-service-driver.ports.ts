@@ -3,4 +3,5 @@ import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core
 
 export interface TweetServiceDriverPorts {
     submitTweet(dto: RequestTweetCreateDTO): Promise< ResponseTweetDTO| null>;
+    getAllTweets(): Promise<ResponseTweetDTO[] | null>;
 }
