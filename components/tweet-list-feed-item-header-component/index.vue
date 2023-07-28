@@ -16,7 +16,7 @@
         <nuxt-link to="#">
           {{`@${author?.username}`}}
         </nuxt-link>
-        {{`. ${humanizeDate(props.tweet?.updatedAt as string)} ${translate('tweet.moment.past')}`}}
+        {{`. ${humanizeDate(props.tweet?.updatedAt?.toDateString() as string)} ${translate('tweet.moment.past')}`}}
       </span>
 
       <p v-if="props.tweet?.replyToId" class="text-sm">
