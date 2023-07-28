@@ -18,11 +18,17 @@ export function TweetStore() {
         }
 
         tweet.value = await Tweet.submitTweet(dto);
+        await getAllTweets();
+    }
+
+    async function getAllTweets(): Promise<void> {
+        tweetsCollection.value = await Tweet.getAllTweets();
     }
 
     return{
         tweet,
         tweetsCollection,
-        submitTweet
+        submitTweet,
+        getAllTweets
     };
 }

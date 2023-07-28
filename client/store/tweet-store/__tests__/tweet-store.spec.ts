@@ -19,10 +19,10 @@ describe('Tweet store tests', () => {
     const tweetStore = Store.useTweetStore();
 
     const { user } = storeToRefs(userStore);
-    const { tweet } = storeToRefs(tweetStore);
+    const { tweet, tweetsCollection } = storeToRefs(tweetStore);
 
     const { signup, login } = userStore;
-    const { submitTweet } = tweetStore;
+    const { submitTweet, getAllTweets } = tweetStore;
 
     const fakePassword = faker.internet.password();
 
@@ -85,33 +85,82 @@ describe('Tweet store tests', () => {
                 updatedAt: expect.any(String)
             }));
 
+        }, { retry: retries });
+
+        it('submitTweet should return if userId or tweet text are not provided', async () => {
+
+            const blob = new Blob([faker.image.url()]);
+
+            const tweetRequestDTO = <RequestTweetCreateDTO>{
+                userId: '',
+                text: '',
+                mediaFiles:  [new File([blob], 'testImage.jpg')]
+            };
+
+            const spy = vi.fn(submitTweet);
+            await spy(tweetRequestDTO);
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith(tweetRequestDTO);
+
+            expect(spy).toReturn();
+
         });
 
-    }, { retry: retries });
-
-    it('submitTweet should return if userId or tweet text are not provided', async () => {
-
-        const blob = new Blob([faker.image.url()]);
-
-        const tweetRequestDTO = <RequestTweetCreateDTO>{
-            userId: '',
-            text: '',
-            mediaFiles:  [new File([blob], 'testImage.jpg')]
-        };
-
-        const spy = vi.fn(submitTweet);
-        await spy(tweetRequestDTO);
-
-        expect(spy).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledWith(tweetRequestDTO);
-
-        expect(spy).toReturn();
-
+        afterAll(async () => {
+            user.value = null;
+            tweet.value = null;
+        });
     });
 
-    afterAll(async () => {
-        user.value = null;
-        tweet.value = null;
+    describe('getAllTweets port tests', () => {
+
+        beforeAll(async () => {
+            fakeNewUser.username = faker.internet.userName();
+            await signup(fakeNewUser);
+        });
+
+        it('getAllTweets should return a ResponseTweetDTO[] collection', async () => {
+
+            expect(user.value).toBeDefined();
+            expect(tweetsCollection.value).toBeDefined();
+
+            expect(getAllTweets).toBeDefined();
+            expect(getAllTweets).toBeInstanceOf(Function);
+
+            const userAuthDTO: RequestUserAuthDTO = {
+                username: fakeNewUser.username,
+                password: fakeNewUser.password
+            };
+
+            await login(userAuthDTO);
+
+            const blob = new Blob([faker.image.url()]);
+
+            const tweetRequestDTO = <RequestTweetCreateDTO>{
+                userId: user.value?.id,
+                text: faker.word.words(3),
+                mediaFiles:  [new File([blob], 'testImage.jpg')]
+            };
+
+            await submitTweet(tweetRequestDTO);
+
+            const spy = vi.fn(getAllTweets);
+            await spy();
+
+            expect(spy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalledWith();
+
+            expect(tweetsCollection.value).toStrictEqual(expect.arrayContaining(<ResponseTweetDTO[]>[expect.objectContaining(<ResponseTweetDTO>{
+                id: expect.any(String),
+                userId: expect.any(String),
+                text: expect.any(String),
+                createdAt: expect.any(String),
+                updatedAt: expect.any(String),
+            })]));
+
+        });
+
     });
 
 });
