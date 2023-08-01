@@ -9,6 +9,6 @@ export interface UserServiceDriverPort {
     signup(dto: RequestUserRegisterDTO): Promise<ResponseUserRegisterDTO | null>;
     login(dto: RequestUserAuthDTO): Promise<ResponseUserAuthDTO | null>;
     refreshToken(): Promise<ResponseTokenRefreshDTO | null>;
-    getUser(accessToken: string): Promise<ResponseUserAuthDTO | null>;
+    getUser(): Promise<ResponseUserAuthDTO | null>;
     decodeAccessToken(accessToken: string): Promise<UserServiceDecodeAccessTokenDTO | null>;
 }

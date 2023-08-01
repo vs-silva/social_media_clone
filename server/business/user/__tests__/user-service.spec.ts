@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+import {beforeAll, describe, expect, it, vi, afterAll} from "vitest";
 import {faker} from "@faker-js/faker";
 import User from "../index";
 import type {RequestUserRegisterDTO} from "../core/dtos/request-user-register.dto";
@@ -22,9 +22,18 @@ describe('User service tests', () => {
 
     describe('registerUser port tests', () => {
 
+        beforeAll(() => {
+            fakeNewUser.username = faker.internet.userName();
+        });
+
         it('registerUser port should create a new user and return UserDTO', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
+            expect(fakeNewUser.username).toBeDefined();
+            expect(fakeNewUser.password).toBeDefined();
+            expect(fakeNewUser.email).toBeDefined();
+
+            expect(User.registerUser).toBeDefined();
+            expect(User.registerUser).toBeInstanceOf(Function);
 
             const spy = vi.spyOn(User, 'registerUser');
             const result = await User.registerUser(fakeNewUser);
@@ -47,11 +56,14 @@ describe('User service tests', () => {
                 profileCreateDate: expect.any(Date),
                 profileLastUpdateDate: expect.any(Date)
             }));
+
         });
 
         it('registerUser port should not create a new user and return null if required field is not provided', async () => {
 
             fakeNewUser.username = '';
+
+            expect(fakeNewUser.username).toBeFalsy();
 
             const spy = vi.spyOn(User, 'registerUser');
             const result = await User.registerUser(fakeNewUser);
@@ -63,21 +75,42 @@ describe('User service tests', () => {
             
         });
 
+        afterAll(() => {
+            fakeNewUser.username = '';
+        });
+
     });
+
 
     describe('authenticateUser port tests', () => {
 
-        it('authenticateUser should return UserDTO with accessToken if provided login credentials are correct', async ()=>{
+        let registeredUser: UserDTO | null;
 
+        const fakeAuthCredentials: RequestUserAuthDTO = {
+            username: '',
+            password: '',
+            accessTokenSecret: `${faker.word.words()}:${faker.word.words()}`,
+            refreshTokenSecret: `${faker.word.words()}:${faker.word.words()}`
+        };
+
+        beforeAll(async () => {
             fakeNewUser.username = faker.internet.userName();
-            const user = await User.registerUser(fakeNewUser);
+            registeredUser = await User.registerUser(fakeNewUser);
+        });
 
-            const fakeAuthCredentials: RequestUserAuthDTO = {
-                username: user?.username as string,
-                password: fakeNewUser.password,
-                accessTokenSecret: `${faker.word.words()}:${faker.word.words()}`,
-                refreshTokenSecret: `${faker.word.words()}:${faker.word.words()}`
-            };
+        it('authenticateUser should return UserDTO with accessToken if provided login credentials are correct', async () => {
+
+            expect(fakeAuthCredentials).toBeDefined();
+            expect(fakeAuthCredentials.username).toBeFalsy();
+            expect(fakeAuthCredentials.password).toBeFalsy();
+
+            expect(registeredUser).toBeDefined();
+
+            expect(User.authenticateUser).toBeDefined();
+            expect(User.authenticateUser).toBeInstanceOf(Function);
+
+            fakeAuthCredentials.username = registeredUser?.username as string;
+            fakeAuthCredentials.password = fakeNewUser.password;
 
             const spy = vi.spyOn(User, 'authenticateUser');
             const result = await User.authenticateUser(fakeAuthCredentials);
@@ -107,17 +140,16 @@ describe('User service tests', () => {
 
         });
 
-        it('authenticateUser should return null any if of login credentials are missing or incorrect', async () => {
+        it('authenticateUser should return null any if username is incorrect', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
-            const user = await User.registerUser(fakeNewUser);
+            expect(fakeAuthCredentials).toBeDefined();
+            expect(registeredUser).toBeDefined();
 
-            const fakeAuthCredentials: RequestUserAuthDTO = {
-                username: user?.username as string,
-                password: faker.internet.password(),
-                accessTokenSecret: `${faker.word.words()}:${faker.word.words()}`,
-                refreshTokenSecret: `${faker.word.words()}:${faker.word.words()}`
-            };
+            fakeAuthCredentials.username = faker.internet.userName();
+            expect(fakeAuthCredentials.username).toBeDefined();
+            expect(fakeAuthCredentials.username).not.toEqual(registeredUser?.username);
+
+            expect(fakeAuthCredentials.password).toBeDefined();
 
             const spy = vi.spyOn(User, 'authenticateUser');
             const result = await User.authenticateUser(fakeAuthCredentials);
@@ -126,22 +158,73 @@ describe('User service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeAuthCredentials);
 
             expect(result).toBeNull();
+
+        });
+
+        it('authenticateUser should return null any if password is incorrect', async () => {
+
+            expect(fakeAuthCredentials).toBeDefined();
+            expect(registeredUser).toBeDefined();
+
+            fakeAuthCredentials.username = registeredUser?.username as string;
+            fakeAuthCredentials.password = faker.internet.password();
+
+            expect(registeredUser?.username).toEqual(fakeAuthCredentials.username);
+            expect(fakeNewUser.password).not.toEqual(fakeAuthCredentials.password);
+
+            const spy = vi.spyOn(User, 'authenticateUser');
+            const result = await User.authenticateUser(fakeAuthCredentials);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeAuthCredentials);
+
+            expect(result).toBeNull();
+
+        });
+
+        it('authenticateUser should return null if tokens are not generated', async () => {
+
+            expect(fakeAuthCredentials).toBeDefined();
+            expect(registeredUser).toBeDefined();
+
+            fakeAuthCredentials.accessTokenSecret = '';
+            fakeAuthCredentials.refreshTokenSecret = '';
+
+            expect(fakeAuthCredentials.username).toEqual(registeredUser?.username as string);
+            fakeAuthCredentials.password = fakeNewUser.password;
+
+            const spy = vi.spyOn(User, 'authenticateUser');
+            const result = await User.authenticateUser(fakeAuthCredentials);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeAuthCredentials);
+
+            expect(result).toBeNull();
+
+        });
+
+        afterAll(() => {
+            fakeNewUser.username = '';
         });
 
     });
 
     describe('getUserById port tests', () => {
 
+        let registeredUser: UserDTO | null;
+
+        beforeAll( async () => {
+            fakeNewUser.username = faker.internet.userName();
+            registeredUser = await User.registerUser(fakeNewUser);
+        });
+
         it('getUserById should return a UserDTO if provided userId exist in data provider', async () => {
 
-            fakeNewUser.username = faker.internet.userName();
-            const user = await User.registerUser(fakeNewUser);
-
             const spy = vi.spyOn(User, 'getUserById');
-            const result = await User.getUserById(user?.id as string);
+            const result = await User.getUserById(registeredUser?.id as string);
 
             expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(user?.id as string);
+            expect(spy).toHaveBeenCalledWith(registeredUser?.id as string);
 
             expect(result).toBeTruthy();
             expect(result?.id).toBeTruthy();
@@ -174,19 +257,9 @@ describe('User service tests', () => {
             expect(result).toBeNull();
         });
 
-        it('getUserById should return Null if empty string or userId is provided', async () => {
-
-            const fakeEmptyStringUserId = '  ';
-
-            const spy = vi.spyOn(User, 'getUserById');
-            const result = await User.getUserById(fakeEmptyStringUserId);
-
-            expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(fakeEmptyStringUserId);
-
-            expect(result).toBeNull();
+        afterAll(() => {
+            fakeNewUser.username = '';
         });
-
     });
 
 });

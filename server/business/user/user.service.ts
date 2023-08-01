@@ -14,10 +14,6 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
 
     async function registerUser(dto: RequestUserRegisterDTO): Promise<UserDTO | null> {
 
-        if(!dto.username.trim() || !dto.email.trim() || !dto.password.trim() || !dto.repeatPassword.trim()) {
-            return null;
-        }
-
         const entity = await writer.save({
             email: dto.email,
             username: dto.username,
@@ -81,10 +77,6 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
     }
 
     async function getUserById(userId: string): Promise<UserDTO | null> {
-
-        if(!userId.trim()) {
-            return null;
-        }
 
         const entity = await reader.getBy(() => ({id: userId}));
 

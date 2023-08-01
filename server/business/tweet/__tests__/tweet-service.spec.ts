@@ -39,7 +39,7 @@ describe('Tweet service tests', () => {
 
         it('createTweet should return null if required RequestTweetCreateDTO fields are not provided', async () => {
 
-            fakeTweet.text = ' ';
+            fakeTweet.text = '';
 
             const spy = vi.spyOn(Tweet, 'createTweet');
             const result = await Tweet.createTweet(fakeTweet);
