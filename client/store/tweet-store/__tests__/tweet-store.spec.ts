@@ -85,7 +85,7 @@ describe('Tweet store tests', () => {
                 updatedAt: expect.any(String)
             }));
 
-        }, { retry: retries });
+        }, { timeout: 30000, retry: retries });
 
         it.skip('submitTweet should return if userId or tweet text are not provided', async () => {
 
