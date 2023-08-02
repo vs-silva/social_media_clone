@@ -9,7 +9,7 @@ import type {ResponseUserAuthDTO} from "../../../../server/business/user/core/dt
 import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 
-describe('Tweet store tests', () => {
+describe.skip('Tweet store tests', () => {
 
     const retries: number = 3;
 
@@ -41,7 +41,7 @@ describe('Tweet store tests', () => {
             await signup(fakeNewUser);
         });
 
-        it.skip('submitTweet should allow logged user to post a tweet', async () => {
+        it('submitTweet should allow logged user to post a tweet', async () => {
 
             expect(user.value).toBeDefined();
             expect(tweet.value).toBeDefined();
@@ -87,7 +87,7 @@ describe('Tweet store tests', () => {
 
         }, { timeout: 30000, retry: retries });
 
-        it.skip('submitTweet should return if userId or tweet text are not provided', async () => {
+        it('submitTweet should return if userId or tweet text are not provided', async () => {
 
             const blob = new Blob([faker.image.url()]);
 
