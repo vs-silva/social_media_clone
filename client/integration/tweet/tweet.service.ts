@@ -8,13 +8,7 @@ import {TweetServiceResourceConstants} from "./core/constants/tweet-service-reso
 
 export function TweetService(writer: TweetServiceWriterDrivenPorts, reader: TweetServiceReaderDrivenPorts): TweetServiceDriverPorts {
 
-    const idRegex = /\b[0-9a-f]{24}\b/;
-
     async function submitTweet(dto: RequestTweetCreateDTO): Promise<ResponseTweetDTO | null> {
-
-        if(!idRegex.test(dto.userId)) {
-            return null;
-        }
 
         const tweetForm = new FormData();
         tweetForm.append(TweetServiceFormFieldsConstants.TEXT, dto.text);
@@ -25,14 +19,7 @@ export function TweetService(writer: TweetServiceWriterDrivenPorts, reader: Twee
             }
         }
 
-        const result = await writer.postTweet(tweetForm, TweetServiceResourceConstants.TWEET)
-
-        if(!result) {
-            return null;
-        }
-
-        return result;
-
+        return await writer.postTweet(tweetForm, TweetServiceResourceConstants.TWEET);
     }
 
     async function getAllTweets(): Promise<ResponseTweetDTO[] | null> {

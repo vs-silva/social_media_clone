@@ -29,7 +29,6 @@ export function TweetServiceDatabaseWriterAdapter(): TweetServiceWriterDrivenPor
             };
 
         } catch (error) {
-            console.log(error);
             return null;
         }
 

@@ -22,10 +22,6 @@ export function UserStore() {
 
     async function renewAccessToken(accessToken: string): Promise<void> {
 
-        if(!accessToken) {
-            return;
-        }
-
         const result = await User.decodeAccessToken(accessToken);
 
         setTimeout(async () => {
@@ -33,13 +29,8 @@ export function UserStore() {
         }, result?.renewCountTimer);
     }
 
-    async function getUser(accessToken: string): Promise<void> {
-
-        if(!accessToken) {
-            return;
-        }
-
-        user.value = await User.getUser(accessToken) as ResponseUserAuthDTO;
+    async function getUser(): Promise<void> {
+        user.value = await User.getUser() as ResponseUserAuthDTO;
     }
 
     async function refreshToken(): Promise<void> {
@@ -50,7 +41,7 @@ export function UserStore() {
             return;
         }
 
-        await getUser(result?.accessToken);
+        await getUser();
         await renewAccessToken(result?.accessToken);
     }
 

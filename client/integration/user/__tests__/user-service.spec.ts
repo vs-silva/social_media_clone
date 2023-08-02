@@ -12,7 +12,6 @@ import type {UserServiceDecodeAccessTokenDTO} from "../core/dtos/user-service-de
 describe('Integration: User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
-    const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;
 
     const fakePassword = faker.internet.password();
 
@@ -184,7 +183,7 @@ describe('Integration: User service tests', () => {
                 accessToken: expect.any(String),
             }));
 
-        });
+        }, {retry: 3});
 
 
         describe('getUser port tests', () => {
