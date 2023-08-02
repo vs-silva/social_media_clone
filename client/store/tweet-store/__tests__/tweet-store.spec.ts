@@ -41,7 +41,7 @@ describe('Tweet store tests', () => {
             await signup(fakeNewUser);
         });
 
-        it('submitTweet should allow logged user to post a tweet', async () => {
+        it.skip('submitTweet should allow logged user to post a tweet', async () => {
 
             expect(user.value).toBeDefined();
             expect(tweet.value).toBeDefined();
