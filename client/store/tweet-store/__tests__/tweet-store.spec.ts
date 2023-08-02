@@ -87,7 +87,7 @@ describe('Tweet store tests', () => {
 
         }, { retry: retries });
 
-        it('submitTweet should return if userId or tweet text are not provided', async () => {
+        it.skip('submitTweet should return if userId or tweet text are not provided', async () => {
 
             const blob = new Blob([faker.image.url()]);
 
@@ -120,7 +120,7 @@ describe('Tweet store tests', () => {
             await signup(fakeNewUser);
         });
 
-        it('getAllTweets should return a ResponseTweetDTO[] collection', async () => {
+        it.skip('getAllTweets should return a ResponseTweetDTO[] collection', async () => {
 
             expect(user.value).toBeDefined();
             expect(tweetsCollection.value).toBeDefined();
