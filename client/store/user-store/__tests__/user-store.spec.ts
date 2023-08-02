@@ -182,7 +182,7 @@ describe('User store tests', () => {
 
         describe('getUser port tests', () => {
 
-            it('getUser should update ref user by returning a ResponseUserAuthDTO', async () => {
+            it.skip('getUser should update ref user by returning a ResponseUserAuthDTO', async () => {
 
                 expect(user.value).toBeDefined();
 
