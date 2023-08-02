@@ -1,5 +1,5 @@
-import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 
 export interface TweetServiceWriterDrivenPorts {
-    postTweet(dto: FormData, resource: string): Promise<ResponseTweetCreateDTO | null>;
+    postTweet(dto: FormData, resource: string): Promise<ResponseTweetDTO | null>;
 }

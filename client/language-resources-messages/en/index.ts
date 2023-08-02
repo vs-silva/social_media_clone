@@ -6,5 +6,13 @@ export default {
             }
         }
 
+    },
+    tweet: {
+        moment: {
+            past: 'ago'
+        },
+        message: {
+            reply: 'Replying to'
+        }
     }
 };

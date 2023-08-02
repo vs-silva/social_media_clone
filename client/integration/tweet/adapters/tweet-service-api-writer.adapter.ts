@@ -1,5 +1,5 @@
 import type {TweetServiceWriterDrivenPorts} from "../ports/tweet-service-writer-driven.ports";
-import type {ResponseTweetCreateDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-create.dto";
+import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 import {AxiosInstance} from "axios";
 import {ApiEngine} from "../../../engines/api-engine";
 import {ApiEngineConfigDTO} from "../../../engines/api-engine/api-engine-config.dto";
@@ -16,7 +16,7 @@ export function TweetServiceApiWriterAdapter(): TweetServiceWriterDrivenPorts {
         errorServiceRequestEvent: TweetServiceEventTypeConstants.TWEET_SERVICE_REQUEST_FAILED
     }, EventbusEngine);
 
-    async function postTweet(dto: FormData, resource: string): Promise<ResponseTweetCreateDTO | null> {
+    async function postTweet(dto: FormData, resource: string): Promise<ResponseTweetDTO | null> {
 
         try {
             const response = await engine.post(resource, dto, {
@@ -25,7 +25,7 @@ export function TweetServiceApiWriterAdapter(): TweetServiceWriterDrivenPorts {
                 }
             });
 
-            return response.data as ResponseTweetCreateDTO;
+            return response.data as ResponseTweetDTO;
 
         } catch (error) {
             return null;

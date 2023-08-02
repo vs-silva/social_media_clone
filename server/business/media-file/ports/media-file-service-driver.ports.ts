@@ -5,4 +5,5 @@ import type {MediaFileDTO} from "../core/dtos/media-file.dto";
 export interface MediaFileServiceDriverPorts {
     uploadMediaFile(resourcePath: string): Promise<MediaFileCloudDTO | null>;
     createMediaFile(dto: RequestMediaFileCreateDTO): Promise<MediaFileDTO | null>;
+    getMediaFileByTweetId(tweetId: string): Promise<MediaFileDTO | null>;
 }

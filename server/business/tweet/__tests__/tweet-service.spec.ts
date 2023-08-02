@@ -39,7 +39,7 @@ describe('Tweet service tests', () => {
 
         it('createTweet should return null if required RequestTweetCreateDTO fields are not provided', async () => {
 
-            fakeTweet.text = ' ';
+            fakeTweet.text = '';
 
             const spy = vi.spyOn(Tweet, 'createTweet');
             const result = await Tweet.createTweet(fakeTweet);
@@ -52,5 +52,39 @@ describe('Tweet service tests', () => {
         });
 
     });
+
+    describe('getAllTweets port tests', () => {
+
+        const fakeTweet: RequestTweetCreateDTO = {
+            userId: faker.database.mongodbObjectId(),
+            text: faker.word.words(5)
+        };
+
+        it('getAllTweets should return a collection of TweetDTO', async () => {
+
+            await Tweet.createTweet(fakeTweet);
+
+            const spy = vi.spyOn(Tweet, 'getAllTweets');
+            const result = await Tweet.getAllTweets();
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith();
+
+            expect(result).toBeDefined();
+
+           expect(result).toStrictEqual(expect.arrayContaining(<TweetDTO[]>[expect.objectContaining(<TweetDTO>{
+                id: expect.any(String),
+                userId: expect.any(String),
+                text: expect.any(String),
+                createdAt: expect.any(Date),
+                updatedAt: expect.any(Date)
+            })]));
+
+        });
+
+    });
+
+
+
 
 });

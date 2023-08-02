@@ -1,11 +1,13 @@
 import type {MediaFileServiceDriverPorts} from "./ports/media-file-service-driver.ports";
 import type {MediaFileServiceEngineDrivenPorts} from "./ports/media-file-service-engine-driven.ports";
+import type {MediaFileServiceWriterDrivenPorts} from "./ports/media-file-service-writer-driven.ports";
+import type {MediaFileServiceReaderDrivenPorts} from "./ports/media-file-service-reader-driven.ports";
 import type {MediaFileCloudDTO} from "./core/dtos/media-file-cloud.dto";
 import type {RequestMediaFileCreateDTO} from "./core/dtos/request-media-file-create.dto";
 import type {MediaFileDTO} from "./core/dtos/media-file.dto";
-import {MediaFileServiceWriterDrivenPorts} from "./ports/media-file-service-writer-driven.ports";
 
-export function MediaFileService(engine: MediaFileServiceEngineDrivenPorts, writer: MediaFileServiceWriterDrivenPorts): MediaFileServiceDriverPorts {
+
+export function MediaFileService(engine: MediaFileServiceEngineDrivenPorts, writer: MediaFileServiceWriterDrivenPorts, reader: MediaFileServiceReaderDrivenPorts): MediaFileServiceDriverPorts {
 
     async function uploadMediaFile(resourcePath: string): Promise<MediaFileCloudDTO | null> {
 
@@ -54,8 +56,29 @@ export function MediaFileService(engine: MediaFileServiceEngineDrivenPorts, writ
         };
     }
 
+    async function getMediaFileByTweetId(tweetId: string): Promise<MediaFileDTO | null> {
+
+        const entity = await reader.getBy(() => ({tweetId: tweetId}));
+
+        if(!entity) {
+            return null;
+        }
+
+        return <MediaFileDTO>{
+            id: entity.id,
+            userId: entity.userId,
+            url: entity.url,
+            providerPublicId: entity.providerPublicId,
+            createAt: entity.createdAt,
+            updatedAt: entity.updatedAt,
+            tweetId: entity.tweetId
+        };
+
+    }
+
     return {
       uploadMediaFile,
-      createMediaFile
+      createMediaFile,
+      getMediaFileByTweetId
     };
 }

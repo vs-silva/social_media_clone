@@ -10,70 +10,25 @@ import type {RequestUserAuthDTO} from "../../../server/business/user/core/dtos/r
 import type {ResponseTokenRefreshDTO} from "../../../server/business/token/core/dtos/response-token-refresh.dto";
 import type {UserServiceDecodeAccessTokenDTO} from "./core/dtos/user-service-decode-access-token.dto";
 
-
 export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserServiceReaderDrivenPorts, cryptographer: UserServiceCryptographerDrivenPorts):UserServiceDriverPort {
 
-    const tokenRegex = /^([A-Za-z0-9-_=]+\.)+([A-Za-z0-9-_=]+)+(\.[A-Za-z0-9-_.+/=]+)?$/;
-
     async function signup(dto: RequestUserRegisterDTO): Promise<ResponseUserRegisterDTO | null> {
-
-        const result = await writer.register(dto, UserServiceResourceConstants.REGISTER);
-
-        if(!result) {
-            return null;
-        }
-
-        return result;
+        return await writer.register(dto, UserServiceResourceConstants.REGISTER);
     }
 
     async function login(dto: RequestUserAuthDTO): Promise<ResponseUserAuthDTO | null> {
-
-        const result = await writer.login(dto, UserServiceResourceConstants.LOGIN);
-
-        if(!result) {
-            return null;
-        }
-
-        return result;
-
+        return await writer.login(dto, UserServiceResourceConstants.LOGIN);
     }
 
-    async function refreshToken(accessToken: string): Promise<ResponseTokenRefreshDTO | null> {
-
-        if(!tokenRegex.test(accessToken)) {
-            return null;
-        }
-
-        const result = await reader.refresh(UserServiceResourceConstants.REFRESH);
-
-        if(!result) {
-            return null;
-        }
-
-        return result;
+    async function refreshToken(): Promise<ResponseTokenRefreshDTO | null> {
+        return await reader.refresh(UserServiceResourceConstants.REFRESH);
     }
 
-    async function getUser(accessToken: string): Promise<ResponseUserAuthDTO | null> {
-
-        if(!tokenRegex.test(accessToken)) {
-            return null;
-        }
-
-        const result = await reader.getUserInfo(UserServiceResourceConstants.USER);
-
-        if(!result) {
-            return null;
-        }
-
-        return result;
-
+    async function getUser(): Promise<ResponseUserAuthDTO | null> {
+        return await reader.getUserInfo(UserServiceResourceConstants.USER);
     }
 
     async function decodeAccessToken(accessToken: string): Promise<UserServiceDecodeAccessTokenDTO | null> {
-
-        if(!tokenRegex.test(accessToken)) {
-            return null;
-        }
 
         const result = await cryptographer.decode(accessToken);
 
