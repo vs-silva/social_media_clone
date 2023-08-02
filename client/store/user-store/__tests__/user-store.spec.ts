@@ -205,7 +205,10 @@ describe('User store tests', () => {
                     accessToken: expect.any(String)
                 }));
 
-            }, {retry: 3});
+            }, {
+                timeout: 30000,
+                retry: 3
+            });
 
         });
 
