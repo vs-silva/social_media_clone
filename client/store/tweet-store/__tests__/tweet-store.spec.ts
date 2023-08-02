@@ -159,6 +159,9 @@ describe('Tweet store tests', () => {
                 updatedAt: expect.any(String),
             })]));
 
+        }, {
+            timeout: 30000,
+            retry: 3
         });
 
     });

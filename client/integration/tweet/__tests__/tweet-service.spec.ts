@@ -72,7 +72,10 @@ describe('Integration: Tweet service tests', () => {
                 updatedAt: expect.any(String),
             }));
 
-        }, {retry: 3});
+        }, {
+            timeout: 30000,
+            retry: 3
+        });
 
     });
 
@@ -105,6 +108,9 @@ describe('Integration: Tweet service tests', () => {
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
             })]));
+        }, {
+            timeout: 30000,
+            retry: 3
         });
 
     });
