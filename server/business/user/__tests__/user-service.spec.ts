@@ -20,15 +20,15 @@ describe('User service tests', () => {
         name: `${faker.person.firstName()} ${faker.person.lastName()}`
     };
 
-    let userId: string;
+    const userIds: string[] = [];
 
     describe('registerUser port tests', () => {
+
+        let userId: string | null;
 
         beforeAll(() => {
             fakeNewUser.username = faker.internet.userName();
         });
-
-        //TODO add unregister here as well
 
         it('registerUser port should create a new user and return UserDTO', async () => {
 
@@ -65,6 +65,18 @@ describe('User service tests', () => {
 
         });
 
+        it('registerUser port should not create a new user and return null if a user with the same username already exists', async () => {
+
+            const spy = vi.spyOn(User, 'registerUser');
+            const result = await User.registerUser(fakeNewUser);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeNewUser);
+
+            expect(result).toBeNull();
+
+        });
+
         it('registerUser port should not create a new user and return null if required field is not provided', async () => {
 
             fakeNewUser.username = '';
@@ -78,47 +90,92 @@ describe('User service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeNewUser);
 
             expect(result).toBeNull();
-            
+
+        });
+
+        it('registerUser port should not create a new user and return null if password and repeatPassword do not match', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            fakeNewUser.repeatPassword = faker.internet.password();
+
+            expect(fakeNewUser.repeatPassword).not.toEqual(fakeNewUser.password);
+
+            const spy = vi.spyOn(User, 'registerUser');
+            const result = await User.registerUser(fakeNewUser);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeNewUser);
+
+            expect(result).toBeNull();
+
+        });
+
+        describe('urRegisterUser port tests', () => {
+
+            it('urRegisterUser should remove an user from the dataProvider and return UserDTO', async () => {
+
+                expect(userId).toBeTruthy();
+
+                expect(User.unRegisterUser).toBeDefined();
+                expect(User.unRegisterUser).toBeInstanceOf(Function);
+
+                const spy = vi.spyOn(User, 'unRegisterUser');
+                const result = await User.unRegisterUser(userId as string);
+
+                expect(spy).toHaveBeenCalledOnce();
+                expect(spy).toHaveBeenCalledWith(userId);
+
+                expect(result).toBeTruthy();
+                expect(result?.id).toBeTruthy();
+                expect(result?.id).toMatch(idRegex);
+                expect(result?.id).toEqual(userId);
+
+                expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
+                    id: expect.any(String),
+                    email: expect.any(String),
+                    password: expect.any(String),
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    profileImage: expect.any(String),
+                    profileCreateDate: expect.any(Date),
+                    profileLastUpdateDate: expect.any(Date)
+                }));
+
+            });
+
+            it('urRegisterUser should not remove any user from the dataProvider and return null if the id is invalid or fake', async () => {
+
+                const fakeUserId = faker.database.mongodbObjectId();
+
+                const spy = vi.spyOn(User, 'unRegisterUser');
+                const result = await User.unRegisterUser(fakeUserId);
+
+                expect(spy).toHaveBeenCalledOnce();
+                expect(spy).toHaveBeenCalledWith(fakeUserId);
+
+                expect(result).toBeNull();
+
+            });
+
         });
 
         afterAll(() => {
+            userId = null;
             fakeNewUser.username = '';
         });
 
     });
 
-    describe('urRegisterUser port tests', () => {
 
-        it('urRegisterUser should remove an user from the dataProvider and return UserDTO', async () => {
-            expect(userId).toBeTruthy();
+});
 
-            expect(User.unRegisterUser).toBeDefined();
-            expect(User.unRegisterUser).toBeInstanceOf(Function);
 
-            const spy = vi.spyOn(User, 'unRegisterUser');
-            const result = await User.unRegisterUser(userId);
-
-            expect(result).toBeTruthy();
-            expect(result?.id).toBeTruthy();
-            expect(result?.id).toMatch(idRegex);
-            expect(result?.id).toEqual(userId);
-
-            expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
-                id: expect.any(String),
-                email: expect.any(String),
-                password: expect.any(String),
-                username: expect.any(String),
-                name: expect.any(String),
-                profileImage: expect.any(String),
-                profileCreateDate: expect.any(Date),
-                profileLastUpdateDate: expect.any(Date)
-            }));
-
-        });
-
-    });
 
 /*
+describe('User service tests', () => {
+
+
+
     describe('authenticateUser port tests', () => {
 
         let registeredUser: UserDTO | null;
@@ -132,6 +189,9 @@ describe('User service tests', () => {
 
         beforeAll(async () => {
             fakeNewUser.username = faker.internet.userName();
+            fakeNewUser.password = fakePassword;
+            fakeNewUser.repeatPassword = fakePassword;
+
             registeredUser = await User.registerUser(fakeNewUser);
         });
 
@@ -142,6 +202,9 @@ describe('User service tests', () => {
             expect(fakeAuthCredentials.password).toBeFalsy();
 
             expect(registeredUser).toBeDefined();
+            expect(userId).toBeTruthy();
+
+            userId = registeredUser?.id as string;
 
             expect(User.authenticateUser).toBeDefined();
             expect(User.authenticateUser).toBeInstanceOf(Function);
@@ -240,8 +303,8 @@ describe('User service tests', () => {
 
         });
 
-        afterAll(() => {
-            fakeNewUser.username = '';
+        afterAll(async () => {
+            await User.unRegisterUser(userId);
         });
 
     });
@@ -298,5 +361,6 @@ describe('User service tests', () => {
             fakeNewUser.username = '';
         });
     });
-*/
+
 });
+*/

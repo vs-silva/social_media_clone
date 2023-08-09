@@ -3,4 +3,5 @@ import type {UserEntity} from "../core/entities/user.entity";
 
 export interface UserServiceWriterDrivenPorts {
     save(dto: UserDTO): Promise<UserEntity | null>;
+    remove(expression: () => {}): Promise<UserEntity | null>;
 }
