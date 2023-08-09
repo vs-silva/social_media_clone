@@ -22,9 +22,9 @@
 
 <script setup lang="ts">
 import {onBeforeMount, onDeactivated} from "@vue/runtime-core";
-import EventbusEngine from "../../client/engines/eventbus-engine";
-import {TweetServiceEventTypeConstants} from "../../client/integration/tweet/core/constants/tweet-service-event-type.constants";
-import Store from "../../client/store";
+import EventbusEngine from "../../engines/eventbus-engine";
+import {TweetServiceEventTypeConstants} from "../../integration/tweet/core/constants/tweet-service-event-type.constants";
+import Store from "../../store";
 import {storeToRefs} from "pinia";
 import SpinnerComponent from "../spinner-component/index.vue";
 import TweetFormInputComponent from "../tweet-form-input-component/index.vue";

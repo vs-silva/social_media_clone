@@ -57,8 +57,8 @@
 import {PropType} from "@vue/runtime-core";
 import RightSidebarPreviewCardComponent from "../right-sidebar-preview-card-component/index.vue";
 import RightSidebarPreviewCardItemComponent from "../right-sidebar-preview-card-item-component/index.vue";
-import type {TrendItemDTO} from "../../client/integration/trend/core/dtos/trend-item.dto";
-import type {PersonItemDTO} from "../../client/integration/trend/core/dtos/person-item.dto";
+import type {TrendItemDTO} from "../../integration/trend/core/dtos/trend-item.dto";
+import type {PersonItemDTO} from "../../integration/trend/core/dtos/person-item.dto";
 
 const props = defineProps({
   trends: {

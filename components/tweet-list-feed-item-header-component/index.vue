@@ -36,8 +36,8 @@
 <script setup lang="ts">
 import {PropType, computed} from "@vue/runtime-core";
 import type {ResponseTweetDTO} from "../../server/business/tweet/core/dtos/response-tweet-dto";
-import {translate} from "../../client/engines/language-resource-engine";
-import {humanizeDate} from "../../client/engines/time-engine";
+import {translate} from "../../engines/language-resource-engine";
+import {humanizeDate} from "../../engines/time-engine";
 
 const props = defineProps({
   tweet: {

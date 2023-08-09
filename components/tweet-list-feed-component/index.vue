@@ -25,7 +25,7 @@ import {PropType} from "@vue/runtime-core";
 import type {ResponseTweetDTO} from "../../server/business/tweet/core/dtos/response-tweet-dto";
 import TweetListFeedItemComponent from "../tweet-list-feed-item-component/index.vue";
 import {Transitions} from "../../composables/transitions";
-import {translate} from "../../client/engines/language-resource-engine";
+import {translate} from "../../engines/language-resource-engine";
 
 const props = defineProps({
   tweets: {
