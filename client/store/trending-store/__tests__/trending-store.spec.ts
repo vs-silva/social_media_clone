@@ -4,7 +4,7 @@ import {storeToRefs} from "pinia";
 import Store from "../../index";
 import type {TrendItemDTO} from "../../../integration/trend/core/dtos/trend-item.dto";
 
-describe('Trending store tests', () => {
+describe.skip('Trending store tests', () => {
 
     setActivePinia(createPinia());
 

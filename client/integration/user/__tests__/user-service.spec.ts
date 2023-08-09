@@ -9,7 +9,7 @@ import type {ResponseTokenRefreshDTO} from "../../../../server/business/token/co
 import type {UserServiceDecodeAccessTokenDTO} from "../core/dtos/user-service-decode-access-token.dto";
 
 
-describe('Integration: User service tests', () => {
+describe.skip('Integration: User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
 

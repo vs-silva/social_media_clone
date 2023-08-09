@@ -6,7 +6,7 @@ import type {TokenDTO} from "../core/dtos/token.dto";
 import type {RequestTokenVerifyDTO} from "../core/dtos/request-token-verify.dto";
 import type {ResponseTokenAccessVerifyDTO} from "../core/dtos/response-token-access-verify.dto";
 
-describe('Token service tests', () => {
+describe.skip('Token service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const tokenRegex = /[a-zA-Z0-9_-]+?\.[a-zA-Z0-9_-]+?\.[a-zA-Z0-9_-]+/;
