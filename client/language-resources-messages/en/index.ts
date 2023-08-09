@@ -12,7 +12,8 @@ export default {
             past: 'ago'
         },
         message: {
-            reply: 'Replying to'
+            reply: 'Replying to',
+            no_tweets: 'No tweets!'
         }
     }
 };
