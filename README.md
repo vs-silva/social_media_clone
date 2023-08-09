@@ -9,7 +9,7 @@ Under development...
 - Typescript
 - Javascript
 
-####Tools
+#### Tools
 - Framework ( Nuxt 3 )
 - CSS Framework ( Tailwind CSS )
 - Application State Management ( Pinia )
