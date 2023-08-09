@@ -26,6 +26,8 @@ describe.skip('User service tests', () => {
             fakeNewUser.username = faker.internet.userName();
         });
 
+        //TODO add unregister here as well
+
         it('registerUser port should create a new user and return UserDTO', async () => {
 
             expect(fakeNewUser.username).toBeDefined();
