@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import Store from "../../client/store";
+import Store from "../../store";
 import AuthFormInputComponent from "../auth-form-input-component/index.vue";
 import {RequestUserAuthDTO} from "~/server/business/user/core/dtos/request-user-auth.dto";
 

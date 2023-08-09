@@ -27,11 +27,11 @@ import MainSectionComponent from "../../components/main-section-component/index.
 import TweetFormComponent from "../../components/tweet-form-component/index.vue";
 import TweetListFeedComponent from "../../components/tweet-list-feed-component/index.vue";
 import {Transitions} from "../../composables/transitions";
-import Store from "../../client/store";
+import Store from "../../store";
 import {storeToRefs} from "pinia";
 import {onBeforeMount, onDeactivated} from "@vue/runtime-core";
-import EventbusEngine from "../../client/engines/eventbus-engine";
-import {TweetServiceEventTypeConstants} from "../../client/integration/tweet/core/constants/tweet-service-event-type.constants";
+import EventbusEngine from "../../engines/eventbus-engine";
+import {TweetServiceEventTypeConstants} from "../../integration/tweet/core/constants/tweet-service-event-type.constants";
 
 const loading = ref<boolean>(false);
 

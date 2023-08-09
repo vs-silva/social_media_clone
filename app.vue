@@ -48,14 +48,14 @@
 
 <script setup lang="ts">
 import {ref, onBeforeMount, onDeactivated} from "@vue/runtime-core";
-import Store from "./client/store";
+import Store from "./store";
 import {storeToRefs} from "pinia";
 import LeftSidebarComponent from "./components/left-sidebar-component/index.vue";
 import RightSidebarComponent from "./components/right-sidebar-component/index.vue";
 import AuthComponent from "./components/auth-component/index.vue";
 import AuthLoadingAnimationComponent from "./components/auth-loading-animation-component/index.vue";
-import EventbusEngine from "./client/engines/eventbus-engine";
-import {UserServiceEventTypeConstants} from "./client/integration/user/core/constants/user-service-event-type.constants";
+import EventbusEngine from "./engines/eventbus-engine";
+import {UserServiceEventTypeConstants} from "./integration/user/core/constants/user-service-event-type.constants";
 
 const darkMode = ref<boolean>(false);
 const loading = ref<boolean>(false);
