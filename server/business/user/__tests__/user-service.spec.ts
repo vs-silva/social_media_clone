@@ -5,7 +5,7 @@ import type {RequestUserRegisterDTO} from "../core/dtos/request-user-register.dt
 import type {UserDTO} from "../core/dtos/user.dto";
 import type {RequestUserAuthDTO} from "../core/dtos/request-user-auth.dto";
 
-describe.skip('User service tests', () => {
+describe('User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;
@@ -19,6 +19,8 @@ describe.skip('User service tests', () => {
         username: '',
         name: `${faker.person.firstName()} ${faker.person.lastName()}`
     };
+
+    let userId: string;
 
     describe('registerUser port tests', () => {
 
@@ -47,6 +49,8 @@ describe.skip('User service tests', () => {
             expect(result?.id).toBeTruthy();
             expect(result?.id).toMatch(idRegex);
             expect(result?.password).toMatch(hashedPasswordRegex);
+
+            userId = result?.id as string;
 
             expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
                 id: expect.any(String),
@@ -83,7 +87,38 @@ describe.skip('User service tests', () => {
 
     });
 
+    describe('urRegisterUser port tests', () => {
 
+        it('urRegisterUser should remove an user from the dataProvider and return UserDTO', async () => {
+            expect(userId).toBeTruthy();
+
+            expect(User.unRegisterUser).toBeDefined();
+            expect(User.unRegisterUser).toBeInstanceOf(Function);
+
+            const spy = vi.spyOn(User, 'unRegisterUser');
+            const result = await User.unRegisterUser(userId);
+
+            expect(result).toBeTruthy();
+            expect(result?.id).toBeTruthy();
+            expect(result?.id).toMatch(idRegex);
+            expect(result?.id).toEqual(userId);
+
+            expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
+                id: expect.any(String),
+                email: expect.any(String),
+                password: expect.any(String),
+                username: expect.any(String),
+                name: expect.any(String),
+                profileImage: expect.any(String),
+                profileCreateDate: expect.any(Date),
+                profileLastUpdateDate: expect.any(Date)
+            }));
+
+        });
+
+    });
+
+/*
     describe('authenticateUser port tests', () => {
 
         let registeredUser: UserDTO | null;
@@ -263,5 +298,5 @@ describe.skip('User service tests', () => {
             fakeNewUser.username = '';
         });
     });
-
+*/
 });
