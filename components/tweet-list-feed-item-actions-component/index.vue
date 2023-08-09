@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <main-page />
+  <div class="flex items-center justify-around w-full">
+    <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-import MainPage from './main/index.vue';
 
 </script>
 

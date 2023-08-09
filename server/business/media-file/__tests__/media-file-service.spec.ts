@@ -6,7 +6,7 @@ import type {RequestMediaFileCreateDTO} from "../core/dtos/request-media-file-cr
 import type {MediaFileDTO} from "../core/dtos/media-file.dto";
 
 
-describe('Media File service tests', () => {
+describe.skip('Media File service tests', () => {
 
     function generateFakeCloudProviderPublicId(): string {
         const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

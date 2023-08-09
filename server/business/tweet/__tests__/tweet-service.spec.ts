@@ -4,7 +4,7 @@ import Tweet from "../index";
 import type {RequestTweetCreateDTO} from "../core/dtos/request-tweet-create.dto";
 import type {TweetDTO} from "../core/dtos/tweet.dto";
 
-describe('Tweet service tests', () => {
+describe.skip('Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
 

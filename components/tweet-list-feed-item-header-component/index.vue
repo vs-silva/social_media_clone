@@ -12,11 +12,11 @@
     <div class="ml-3">
       <span class="font-medium text-gray-800 dark:text-white">{{author?.name}}</span>
 
-      <span class="ml-3 text-sm font-medium text-gray-400">
-        <nuxt-link to="#">
-          {{`@${author?.username}`}}
+      <span class="ml-3 text-sm font-medium text-gray-400" v-if="props.tweet">
+        <nuxt-link :to="tweetPageURL">
+          <span class="hover:text-blue-400">{{`@${author?.username}`}}</span>
         </nuxt-link>
-        {{`. ${humanizeDate(props.tweet?.updatedAt?.toDateString() as string)} ${translate('tweet.moment.past')}`}}
+        {{`. ${humanizeDate(((props.tweet?.updatedAt as unknown) as string).toString())} ${translate('tweet.moment.past')}`}}
       </span>
 
       <p v-if="props.tweet?.replyToId" class="text-sm">
@@ -48,7 +48,8 @@ const props = defineProps({
 });
 
 const author = props.tweet?.author;
-const replyToTweetURL = computed(() => `/status/${props.tweet?.replyToId}`);
+const tweetPageURL = computed(() => `TODO${props.tweet?.id}`);
+const replyToTweetURL = computed(() => `TODO${props.tweet?.replyToId}`);
 
 </script>
 

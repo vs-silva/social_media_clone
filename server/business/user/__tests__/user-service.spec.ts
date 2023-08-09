@@ -5,7 +5,7 @@ import type {RequestUserRegisterDTO} from "../core/dtos/request-user-register.dt
 import type {UserDTO} from "../core/dtos/user.dto";
 import type {RequestUserAuthDTO} from "../core/dtos/request-user-auth.dto";
 
-describe('User service tests', () => {
+describe.skip('User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;

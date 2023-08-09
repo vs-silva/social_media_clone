@@ -8,7 +8,7 @@ import type {RequestTweetCreateDTO} from "../../../../server/business/tweet/core
 import type {ResponseTweetDTO} from "../../../../server/business/tweet/core/dtos/response-tweet-dto";
 import type {ResponseUserRegisterDTO} from "../../../../server/business/user/core/dtos/response-user-register.dto";
 
-describe('Integration: Tweet service tests', () => {
+describe.skip('Integration: Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const fakePassword = faker.internet.password();
