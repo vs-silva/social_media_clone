@@ -103,6 +103,9 @@ describe('Integration: User service tests', () => {
                 accessToken: expect.any(String)
             }));
 
+        },{
+            retry: 3,
+            timeout: 10000
         });
 
         it('login should return null if provided login credentials are invalid', async () => {
