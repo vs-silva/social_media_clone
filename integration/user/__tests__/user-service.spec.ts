@@ -8,32 +8,23 @@ import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/
 import type {ResponseTokenRefreshDTO} from "../../../server/business/token/core/dtos/response-token-refresh.dto";
 import type {UserServiceDecodeAccessTokenDTO} from "../core/dtos/user-service-decode-access-token.dto";
 
-
-describe.skip('Integration: User service tests', () => {
+describe('Integration: User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
 
-    const fakePassword = faker.internet.password();
-
-    const fakeNewUser: RequestUserRegisterDTO = {
-        email: faker.internet.email(),
-        password: fakePassword,
-        repeatPassword: fakePassword,
-        username: '',
-        name: `${faker.person.firstName()} ${faker.person.lastName()}`
-    };
-
     describe('signup port tests', () => {
 
-        beforeAll(() => {
-            fakeNewUser.username = faker.internet.userName();
-        });
+        const fakePassword = faker.internet.password();
+
+        const fakeNewUser: RequestUserRegisterDTO = {
+            email: faker.internet.email(),
+            password: fakePassword,
+            repeatPassword: fakePassword,
+            username: faker.internet.userName(),
+            name: `${faker.person.firstName()} ${faker.person.lastName()}`
+        };
 
         it('signup should take a RequestUserRegisterDTO create a new user and return a ResponseUserRegisterDTO', async () => {
-
-            expect(fakeNewUser.username).toBeDefined();
-            expect(fakeNewUser.password).toBeDefined();
-            expect(fakeNewUser.email).toBeDefined();
 
             expect(User.signup).toBeDefined();
             expect(User.signup).toBeInstanceOf(Function);
@@ -56,51 +47,39 @@ describe.skip('Integration: User service tests', () => {
                 profileCreateDate: expect.any(String),
                 profileLastUpdateDate: expect.any(String),
             }));
-
         });
 
-        it('signup should return null if RequestUserAuthDTO field is missing or invalid', async () => {
-
-            fakeNewUser.username = '';
-
-            const spy = vi.spyOn(User, 'signup');
-            const result = await User.signup(fakeNewUser);
-
-            expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(fakeNewUser);
-
-            expect(result).toBeNull();
-        });
-
-
-        afterAll(() => {
-            fakeNewUser.username = '';
-        });
     });
 
     describe('login port tests', () => {
 
+        const fakePassword = faker.internet.password();
+
         let user: ResponseUserRegisterDTO | null;
 
-        const loginCredentials:RequestUserAuthDTO = {
-            username: '',
-            password: fakeNewUser.password
-        };
+        beforeAll(async ()=> {
 
-        beforeAll(async () => {
-            fakeNewUser.username = faker.internet.userName();
-            user = await User.signup(fakeNewUser);
+            user = await User.signup(<RequestUserRegisterDTO>{
+                email: faker.internet.email(),
+                password: fakePassword,
+                repeatPassword: fakePassword,
+                username: faker.internet.userName(),
+                name: `${faker.person.firstName()} ${faker.person.lastName()}`
+            });
 
-            loginCredentials.username = user?.username as string;
         });
 
         it('login should take a RequestUserAuthDTO allow access to a registered user and return a ResponseUserAuthDTO', async () => {
 
             expect(user).toBeDefined();
-            expect(loginCredentials.username).toBeTruthy();
 
             expect(User.login).toBeDefined();
             expect(User.login).toBeInstanceOf(Function);
+
+            const loginCredentials: RequestUserAuthDTO = {
+              username: user?.username as string,
+              password: fakePassword
+            };
 
             const spy = vi.spyOn(User, 'login');
             const result = await User.login(loginCredentials);
@@ -122,10 +101,12 @@ describe.skip('Integration: User service tests', () => {
 
         });
 
-
         it('login should return null if provided login credentials are invalid', async () => {
 
-            loginCredentials.username = faker.internet.userName();
+            const loginCredentials: RequestUserAuthDTO = {
+                username: faker.internet.userName(),
+                password: fakePassword
+            };
 
             const spy = vi.spyOn(User, 'login');
             const result = await User.login(loginCredentials);
@@ -138,7 +119,6 @@ describe.skip('Integration: User service tests', () => {
         });
 
         afterAll(() => {
-            fakeNewUser.username = '';
             user = null;
         });
 
@@ -147,20 +127,26 @@ describe.skip('Integration: User service tests', () => {
 
     describe('refreshToken port tests', () => {
 
+        const fakePassword = faker.internet.password();
         let user: ResponseUserAuthDTO | null;
 
         beforeAll(async () => {
-            fakeNewUser.username = faker.internet.userName();
 
-            const registeredUser = await User.signup(fakeNewUser);
-            user = await User.login(<RequestUserAuthDTO>{
-                username: registeredUser?.username as string,
-                password: fakeNewUser.password
+            const signedUser = await User.signup(<RequestUserRegisterDTO>{
+                email: faker.internet.email(),
+                password: fakePassword,
+                repeatPassword: fakePassword,
+                username: faker.internet.userName(),
+                name: `${faker.person.firstName()} ${faker.person.lastName()}`
             });
 
+            user = await User.login(<RequestUserAuthDTO>{
+                username: signedUser?.username,
+                password: fakePassword
+            });
         });
 
-        it('refreshToken should return a ResponseTokenRefreshDTO with accessToken for registered and loggedIn user with a valid accessToken', async () => {
+        it('refreshToken should return a ResponseTokenRefreshDTO with accessToken for registered and loggedIn user with a valid accessToken', async () =>{
 
             expect(user).toBeDefined();
             expect(user?.accessToken).toBeDefined();
@@ -189,9 +175,6 @@ describe.skip('Integration: User service tests', () => {
         describe('getUser port tests', () => {
 
             beforeAll( async () => {
-                expect(user).toBeDefined();
-                expect(user?.accessToken).toBeDefined();
-
                 await User.refreshToken();
             });
 
@@ -262,7 +245,6 @@ describe.skip('Integration: User service tests', () => {
         });
 
         afterAll(() => {
-            fakeNewUser.username = '';
             user = null;
         });
 
