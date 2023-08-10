@@ -105,30 +105,9 @@ export function UserService(writer: UserServiceWriterDrivenPorts, reader: UserSe
 
     }
 
-    async function unRegisterUser(userId: string): Promise<UserDTO | null> {
-
-        const entity = await writer.remove(() => ({id: userId}));
-
-        if(!entity) {
-            return null;
-        }
-
-        return <UserDTO>{
-            id: entity.id,
-            password: entity.password,
-            name: entity.name,
-            profileImage: entity.profileImage,
-            username: entity.username,
-            email: entity.email,
-            profileLastUpdateDate: entity.updatedAt,
-            profileCreateDate: entity.createdAt
-        };
-
-    }
 
     return {
         registerUser,
-        unRegisterUser,
         authenticateUser,
         getUserById
     };
