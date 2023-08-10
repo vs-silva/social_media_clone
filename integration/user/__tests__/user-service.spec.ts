@@ -8,6 +8,7 @@ import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/
 import type {ResponseTokenRefreshDTO} from "../../../server/business/token/core/dtos/response-token-refresh.dto";
 import type {UserServiceDecodeAccessTokenDTO} from "../core/dtos/user-service-decode-access-token.dto";
 
+
 describe('Integration: User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
@@ -77,8 +78,8 @@ describe('Integration: User service tests', () => {
             expect(User.login).toBeInstanceOf(Function);
 
             const loginCredentials: RequestUserAuthDTO = {
-              username: user?.username as string,
-              password: fakePassword
+                username: user?.username as string,
+                password: fakePassword
             };
 
             const spy = vi.spyOn(User, 'login');
@@ -171,7 +172,6 @@ describe('Integration: User service tests', () => {
 
         }, {retry: 3});
 
-
         describe('getUser port tests', () => {
 
             beforeAll( async () => {
@@ -249,5 +249,4 @@ describe('Integration: User service tests', () => {
         });
 
     });
-
 });
