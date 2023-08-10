@@ -5,7 +5,7 @@ import {RequestUserRegisterDTO} from "~/server/business/user/core/dtos/request-u
 import type {UserDTO} from "../../user/core/dtos/user.dto";
 import User from "../../user";
 
-describe.skip('Encrypter service tests', () => {
+describe('Encrypter service tests', () => {
 
     const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;
 
