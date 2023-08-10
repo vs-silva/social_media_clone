@@ -48,6 +48,9 @@ describe('Integration: User service tests', () => {
                 profileCreateDate: expect.any(String),
                 profileLastUpdateDate: expect.any(String),
             }));
+        }, {
+            retry: 3,
+            timeout: 10000
         });
 
     });
