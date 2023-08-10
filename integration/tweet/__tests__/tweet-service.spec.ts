@@ -6,12 +6,13 @@ import type {RequestUserRegisterDTO} from "../../../server/business/user/core/dt
 import type {RequestUserAuthDTO} from "../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetDTO} from "../../../server/business/tweet/core/dtos/response-tweet-dto";
-import type {ResponseUserRegisterDTO} from "../../../server/business/user/core/dtos/response-user-register.dto";
+import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/response-user-auth.dto";
 
-describe.skip('Integration: Tweet service tests', () => {
+describe('Integration: Tweet service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const fakePassword = faker.internet.password();
+    let user: ResponseUserAuthDTO | null;
 
     const blob = new Blob([faker.image.url()]);
 
@@ -21,11 +22,9 @@ describe.skip('Integration: Tweet service tests', () => {
         mediaFiles: [new File([blob], 'testImage.jpg')]
     };
 
-    let user: ResponseUserRegisterDTO | null;
-
     beforeAll(async () => {
 
-        const registeredUser = await User.signup(<RequestUserRegisterDTO>{
+        const signedUser = await User.signup(<RequestUserRegisterDTO>{
             email: faker.internet.email(),
             password: fakePassword,
             repeatPassword: fakePassword,
@@ -34,13 +33,13 @@ describe.skip('Integration: Tweet service tests', () => {
         });
 
         user = await User.login(<RequestUserAuthDTO>{
-            username: registeredUser?.username,
+            username: signedUser?.username,
             password: fakePassword
         });
 
-        await User.refreshToken();
-
+        fakeTweet.userId = user?.id as string;
     });
+
 
     describe('submitTweet port tests', () => {
 
@@ -50,8 +49,6 @@ describe.skip('Integration: Tweet service tests', () => {
 
             expect(Tweet.submitTweet).toBeDefined();
             expect(Tweet.submitTweet).toBeInstanceOf(Function);
-
-            fakeTweet.userId = user?.id as string;
 
             const spy = vi.spyOn(Tweet, 'submitTweet');
             const result = await Tweet.submitTweet(fakeTweet);
