@@ -5,26 +5,23 @@ import type {RequestUserRegisterDTO} from "../core/dtos/request-user-register.dt
 import type {UserDTO} from "../core/dtos/user.dto";
 import type {RequestUserAuthDTO} from "../core/dtos/request-user-auth.dto";
 
-describe.skip('User service tests', () => {
+
+describe('User service tests', () => {
 
     const idRegex = /\b[0-9a-f]{24}\b/;
     const hashedPasswordRegex = /\$2b\$10\$[./A-Za-z0-9]{53}/;
 
     const fakePassword = faker.internet.password();
 
-    const fakeNewUser: RequestUserRegisterDTO = {
-        email: faker.internet.email(),
-        password: fakePassword,
-        repeatPassword: fakePassword,
-        username: '',
-        name: `${faker.person.firstName()} ${faker.person.lastName()}`
-    };
-
     describe('registerUser port tests', () => {
 
-        beforeAll(() => {
-            fakeNewUser.username = faker.internet.userName();
-        });
+        const fakeNewUser: RequestUserRegisterDTO = {
+            email: faker.internet.email(),
+            password: fakePassword,
+            repeatPassword: fakePassword,
+            username: faker.internet.userName(),
+            name: `${faker.person.firstName()} ${faker.person.lastName()}`
+        };
 
         it('registerUser port should create a new user and return UserDTO', async () => {
 
@@ -59,6 +56,18 @@ describe.skip('User service tests', () => {
 
         });
 
+        it('registerUser port should not create a new user and return null if a user with the same username already exists', async () => {
+
+            const spy = vi.spyOn(User, 'registerUser');
+            const result = await User.registerUser(fakeNewUser);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeNewUser);
+
+            expect(result).toBeNull();
+
+        });
+
         it('registerUser port should not create a new user and return null if required field is not provided', async () => {
 
             fakeNewUser.username = '';
@@ -72,19 +81,29 @@ describe.skip('User service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeNewUser);
 
             expect(result).toBeNull();
-            
+
         });
 
-        afterAll(() => {
-            fakeNewUser.username = '';
+        it('registerUser port should not create a new user and return null if password and repeatPassword do not match', async () => {
+
+            fakeNewUser.username = faker.internet.userName();
+            fakeNewUser.repeatPassword = faker.internet.password();
+
+            expect(fakeNewUser.repeatPassword).not.toEqual(fakeNewUser.password);
+
+            const spy = vi.spyOn(User, 'registerUser');
+            const result = await User.registerUser(fakeNewUser);
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(spy).toHaveBeenCalledWith(fakeNewUser);
+
+            expect(result).toBeNull();
+
         });
 
     });
 
-
     describe('authenticateUser port tests', () => {
-
-        let registeredUser: UserDTO | null;
 
         const fakeAuthCredentials: RequestUserAuthDTO = {
             username: '',
@@ -93,24 +112,26 @@ describe.skip('User service tests', () => {
             refreshTokenSecret: `${faker.word.words()}:${faker.word.words()}`
         };
 
+        let registeredUser: UserDTO | null;
+
         beforeAll(async () => {
-            fakeNewUser.username = faker.internet.userName();
-            registeredUser = await User.registerUser(fakeNewUser);
+
+            registeredUser = await User.registerUser(<RequestUserRegisterDTO>{
+                email: faker.internet.email(),
+                password: fakePassword,
+                repeatPassword: fakePassword,
+                username: faker.internet.userName(),
+                name: `${faker.person.firstName()} ${faker.person.lastName()}`
+            });
+
+            fakeAuthCredentials.username = registeredUser?.username as string;
+            fakeAuthCredentials.password = fakePassword;
         });
 
         it('authenticateUser should return UserDTO with accessToken if provided login credentials are correct', async () => {
 
-            expect(fakeAuthCredentials).toBeDefined();
-            expect(fakeAuthCredentials.username).toBeFalsy();
-            expect(fakeAuthCredentials.password).toBeFalsy();
-
-            expect(registeredUser).toBeDefined();
-
             expect(User.authenticateUser).toBeDefined();
             expect(User.authenticateUser).toBeInstanceOf(Function);
-
-            fakeAuthCredentials.username = registeredUser?.username as string;
-            fakeAuthCredentials.password = fakeNewUser.password;
 
             const spy = vi.spyOn(User, 'authenticateUser');
             const result = await User.authenticateUser(fakeAuthCredentials);
@@ -137,18 +158,12 @@ describe.skip('User service tests', () => {
                 accessToken: expect.any(String),
                 refreshToken: expect.any(String),
             }));
-
         });
 
-        it('authenticateUser should return null any if username is incorrect', async () => {
-
-            expect(fakeAuthCredentials).toBeDefined();
-            expect(registeredUser).toBeDefined();
+        it('authenticateUser should return null if username is incorrect', async () => {
 
             fakeAuthCredentials.username = faker.internet.userName();
             expect(fakeAuthCredentials.username).toBeDefined();
-            expect(fakeAuthCredentials.username).not.toEqual(registeredUser?.username);
-
             expect(fakeAuthCredentials.password).toBeDefined();
 
             const spy = vi.spyOn(User, 'authenticateUser');
@@ -161,16 +176,10 @@ describe.skip('User service tests', () => {
 
         });
 
-        it('authenticateUser should return null any if password is incorrect', async () => {
-
-            expect(fakeAuthCredentials).toBeDefined();
-            expect(registeredUser).toBeDefined();
+        it('authenticateUser should return null if password is incorrect', async () => {
 
             fakeAuthCredentials.username = registeredUser?.username as string;
             fakeAuthCredentials.password = faker.internet.password();
-
-            expect(registeredUser?.username).toEqual(fakeAuthCredentials.username);
-            expect(fakeNewUser.password).not.toEqual(fakeAuthCredentials.password);
 
             const spy = vi.spyOn(User, 'authenticateUser');
             const result = await User.authenticateUser(fakeAuthCredentials);
@@ -184,14 +193,11 @@ describe.skip('User service tests', () => {
 
         it('authenticateUser should return null if tokens are not generated', async () => {
 
-            expect(fakeAuthCredentials).toBeDefined();
-            expect(registeredUser).toBeDefined();
+            fakeAuthCredentials.username = registeredUser?.username as string;
+            fakeAuthCredentials.password = fakePassword;
 
             fakeAuthCredentials.accessTokenSecret = '';
             fakeAuthCredentials.refreshTokenSecret = '';
-
-            expect(fakeAuthCredentials.username).toEqual(registeredUser?.username as string);
-            fakeAuthCredentials.password = fakeNewUser.password;
 
             const spy = vi.spyOn(User, 'authenticateUser');
             const result = await User.authenticateUser(fakeAuthCredentials);
@@ -200,66 +206,59 @@ describe.skip('User service tests', () => {
             expect(spy).toHaveBeenCalledWith(fakeAuthCredentials);
 
             expect(result).toBeNull();
+        });
+
+
+        describe('getUserById port tests', () => {
+
+            it('getUserById should return a UserDTO if provided userId exist in data provider', async () => {
+
+                expect(User.getUserById).toBeDefined();
+                expect(User.getUserById).toBeInstanceOf(Function);
+
+                const spy = vi.spyOn(User, 'getUserById');
+                const result = await User.getUserById(registeredUser?.id as string);
+
+                expect(spy).toHaveBeenCalledOnce();
+                expect(spy).toHaveBeenCalledWith(registeredUser?.id as string);
+
+                expect(result).toBeTruthy();
+                expect(result?.id).toBeTruthy();
+                expect(result?.id).toMatch(idRegex);
+                expect(result?.password).toMatch(hashedPasswordRegex);
+
+                expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
+                    id: expect.any(String),
+                    email: expect.any(String),
+                    password: expect.any(String),
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    profileImage: expect.any(String),
+                    profileCreateDate: expect.any(Date),
+                    profileLastUpdateDate: expect.any(Date)
+                }));
+
+            });
+
+            it('getUserById should return Null if provided userId does not exist in data provider', async () => {
+
+                const fakeUserId = faker.database.mongodbObjectId();
+
+                const spy = vi.spyOn(User, 'getUserById');
+                const result = await User.getUserById(fakeUserId);
+
+                expect(spy).toHaveBeenCalledOnce();
+                expect(spy).toHaveBeenCalledWith(fakeUserId);
+
+                expect(result).toBeNull();
+            });
 
         });
 
         afterAll(() => {
-            fakeNewUser.username = '';
+            registeredUser = null;
         });
 
-    });
-
-    describe('getUserById port tests', () => {
-
-        let registeredUser: UserDTO | null;
-
-        beforeAll( async () => {
-            fakeNewUser.username = faker.internet.userName();
-            registeredUser = await User.registerUser(fakeNewUser);
-        });
-
-        it('getUserById should return a UserDTO if provided userId exist in data provider', async () => {
-
-            const spy = vi.spyOn(User, 'getUserById');
-            const result = await User.getUserById(registeredUser?.id as string);
-
-            expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(registeredUser?.id as string);
-
-            expect(result).toBeTruthy();
-            expect(result?.id).toBeTruthy();
-            expect(result?.id).toMatch(idRegex);
-            expect(result?.password).toMatch(hashedPasswordRegex);
-
-            expect(result).toStrictEqual(expect.objectContaining(<UserDTO>{
-                id: expect.any(String),
-                email: expect.any(String),
-                password: expect.any(String),
-                username: expect.any(String),
-                name: expect.any(String),
-                profileImage: expect.any(String),
-                profileCreateDate: expect.any(Date),
-                profileLastUpdateDate: expect.any(Date)
-            }));
-
-        });
-
-        it('getUserById should return Null if provided userId does not exist in data provider', async () => {
-
-            const fakeUserId = faker.database.mongodbObjectId();
-
-            const spy = vi.spyOn(User, 'getUserById');
-            const result = await User.getUserById(fakeUserId);
-
-            expect(spy).toHaveBeenCalledOnce();
-            expect(spy).toHaveBeenCalledWith(fakeUserId);
-
-            expect(result).toBeNull();
-        });
-
-        afterAll(() => {
-            fakeNewUser.username = '';
-        });
     });
 
 });
