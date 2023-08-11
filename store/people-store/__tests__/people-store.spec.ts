@@ -4,7 +4,7 @@ import {storeToRefs} from "pinia";
 import Store from "../../index";
 import type {PersonItemDTO} from "../../../integration/trend/core/dtos/person-item.dto";
 
-describe.skip('People store tests', () => {
+describe('People store tests', () => {
 
     setActivePinia(createPinia());
 
