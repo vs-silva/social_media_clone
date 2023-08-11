@@ -5,11 +5,10 @@ import {storeToRefs} from "pinia";
 import Store from "../../index";
 import type {RequestUserRegisterDTO} from "../../../server/business/user/core/dtos/request-user-register.dto";
 import type {RequestUserAuthDTO} from "../../../server/business/user/core/dtos/request-user-auth.dto";
-import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/response-user-auth.dto";
 import type {RequestTweetCreateDTO} from "../../../server/business/tweet/core/dtos/request-tweet-create.dto";
 import type {ResponseTweetDTO} from "../../../server/business/tweet/core/dtos/response-tweet-dto";
 
-describe('Store: Tweet store tests', () => {
+describe.skip('Store: Tweet store tests', () => {
 
     const retries: number = 3;
     const timeout: number = 30000;

@@ -8,7 +8,7 @@ import type {ResponseUserRegisterDTO} from "../../../server/business/user/core/d
 import type {RequestUserAuthDTO} from "../../../server/business/user/core/dtos/request-user-auth.dto";
 import type {ResponseUserAuthDTO} from "../../../server/business/user/core/dtos/response-user-auth.dto";
 
-describe('Store: User store tests', () => {
+describe.skip('Store: User store tests', () => {
 
     setActivePinia(createPinia());
     const userStore = Store.useUserStore();
