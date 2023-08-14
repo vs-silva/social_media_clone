@@ -14,6 +14,11 @@ export default {
         message: {
             reply: 'Replying to',
             no_tweets: 'No tweets!'
+        },
+        form: {
+            placeholderTextWhatsHappening: "What is happening?!",
+            placeholderTextPostYourReply: "Post your reply!",
+
         }
     }
 };

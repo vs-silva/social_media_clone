@@ -8,7 +8,7 @@
     <div v-else>
       <tweet-form-input-component
           :profileImage="profileImage"
-          :textPlaceholder="`What's happening ?`"
+          :textPlaceholder="props.formTextPlaceHolder"
           @submit-tweet="(payload) => submitTweet({
         userId: userId,
         text: payload?.tweetText as string,
@@ -28,6 +28,7 @@ import Store from "../../store";
 import {storeToRefs} from "pinia";
 import SpinnerComponent from "../spinner-component/index.vue";
 import TweetFormInputComponent from "../tweet-form-input-component/index.vue";
+import {translate} from "~/engines/language-resource-engine";
 
 const {useUserStore, useTweetStore} = Store;
 const userStore = useUserStore();
@@ -40,6 +41,14 @@ const userId = ref<string>(user.value?.id as string);
 const profileImage = ref<string>(user.value?.profileImage as string);
 
 const loading = ref<boolean>(false);
+
+const props = defineProps({
+  formTextPlaceHolder: {
+    type: String,
+    required: false,
+    default: translate('tweet.form.placeholderTextWhatsHappening')
+  }
+});
 
 onBeforeMount(() => {
   EventbusEngine.on(TweetServiceEventTypeConstants.TWEET_SERVICE_REQUEST_STARTED, () => {
