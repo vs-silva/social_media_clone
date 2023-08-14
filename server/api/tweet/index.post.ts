@@ -1,16 +1,16 @@
 import {createError, defineEventHandler, H3Event, parseCookies, sendError} from "h3";
-import FormProcessorEngine from "../../../engines/form-processor-engine";
+import FormProcessorEngine from "../../engines/form-processor-engine";
 import {errors as FormProcessorEngineErrors} from 'formidable';
-import {TweetConstants} from "../../../business/tweet/core/constants/tweet.constants";
-import {MediaFileConstants} from "../../../business/media-file/core/constants/media-file.constants";
-import {TokenNameConstants} from "../../../business/token/core/constants/token-name.constants";
-import MediaFile from "../../../business/media-file";
-import Tweet from "../../../business/tweet";
-import Token from "../../../business/token";
-import type {RequestMediaFileCreateDTO} from "../../../business/media-file/core/dtos/request-media-file-create.dto";
-import type {RequestTweetCreateDTO} from "../../../business/tweet/core/dtos/request-tweet-create.dto";
-import type {MediaFileDTO} from "../../../business/media-file/core/dtos/media-file.dto";
-import type {ResponseTweetDTO} from "../../../business/tweet/core/dtos/response-tweet-dto";
+import {TweetConstants} from "../../business/tweet/core/constants/tweet.constants";
+import {MediaFileConstants} from "../../business/media-file/core/constants/media-file.constants";
+import {TokenNameConstants} from "../../business/token/core/constants/token-name.constants";
+import MediaFile from "../../business/media-file";
+import Tweet from "../../business/tweet";
+import Token from "../../business/token";
+import type {RequestMediaFileCreateDTO} from "../../business/media-file/core/dtos/request-media-file-create.dto";
+import type {RequestTweetCreateDTO} from "../../business/tweet/core/dtos/request-tweet-create.dto";
+import type {MediaFileDTO} from "../../business/media-file/core/dtos/media-file.dto";
+import type {ResponseTweetDTO} from "../../business/tweet/core/dtos/response-tweet-dto";
 
 export default defineEventHandler(async (event: H3Event) => {
 

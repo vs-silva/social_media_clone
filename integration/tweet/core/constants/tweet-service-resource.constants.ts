@@ -1,4 +1,4 @@
 export const TweetServiceResourceConstants = {
     ROOT:'/api',
-    TWEET: '/user/tweet'
+    TWEET: '/tweet'
 } as const;

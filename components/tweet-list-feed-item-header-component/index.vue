@@ -48,8 +48,8 @@ const props = defineProps({
 });
 
 const author = props.tweet?.author;
-const tweetPageURL = computed(() => `TODO${props.tweet?.id}`);
-const replyToTweetURL = computed(() => `TODO${props.tweet?.replyToId}`);
+const tweetPageURL = computed(() => `TODO/${props.tweet?.id}`);
+const replyToTweetURL = computed(() => `TODO/${props.tweet?.replyToId}`);
 
 </script>
 

@@ -6,4 +6,5 @@ export interface ResponseTweetDTO extends TweetDTO {
     mediaPublicId: string;
     mediaURL: string;
     author?: TweetAuthorDTO;
+    replies?: TweetDTO[];
 }

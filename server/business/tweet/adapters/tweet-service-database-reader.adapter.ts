@@ -16,7 +16,7 @@ export function TweetServiceDatabaseReaderAdapter():TweetServiceReaderDrivenPort
                     {
                         updatedAt: 'desc'
                     }
-                ],
+                ]
             });
 
             if(!dbEntities) {
