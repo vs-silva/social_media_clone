@@ -1,10 +1,10 @@
 import {createError, defineEventHandler, H3Event, parseCookies, sendError} from "h3";
-import {TokenNameConstants} from "../../../business/token/core/constants/token-name.constants";
-import User from "../../../business/user";
-import Tweet from "../../../business/tweet";
-import MediaFile from "../../../business/media-file";
-import type {MediaFileDTO} from "../../../business/media-file/core/dtos/media-file.dto";
-import type {ResponseTweetDTO} from "~/server/business/tweet/core/dtos/response-tweet-dto";
+import {TokenNameConstants} from "../../business/token/core/constants/token-name.constants";
+import User from "../../business/user";
+import Tweet from "../../business/tweet";
+import MediaFile from "../../business/media-file";
+import type {MediaFileDTO} from "../../business/media-file/core/dtos/media-file.dto";
+import type {ResponseTweetDTO} from "../../business/tweet/core/dtos/response-tweet-dto";
 
 export default defineEventHandler(async (event: H3Event) => {
 

@@ -38,6 +38,7 @@ import {PropType, computed} from "@vue/runtime-core";
 import type {ResponseTweetDTO} from "../../server/business/tweet/core/dtos/response-tweet-dto";
 import {translate} from "../../engines/language-resource-engine";
 import {humanizeDate} from "../../engines/time-engine";
+import {TweetPageConstants} from "../../pages/tweet/constants/tweet-page.constants";
 
 const props = defineProps({
   tweet: {
@@ -48,8 +49,8 @@ const props = defineProps({
 });
 
 const author = props.tweet?.author;
-const tweetPageURL = computed(() => `TODO${props.tweet?.id}`);
-const replyToTweetURL = computed(() => `TODO${props.tweet?.replyToId}`);
+const tweetPageURL = computed(() => `${TweetPageConstants.PAGE_IDENTIFIER}${props.tweet?.id}`);
+const replyToTweetURL = computed(() => `${TweetPageConstants.PAGE_IDENTIFIER}${props.tweet?.replyToId}`);
 
 </script>
 

@@ -28,26 +28,26 @@
             :iconType="`${TweetListFeedItemActionsIconConstants.CHAT_ICON}`"
             :iconColor="`${TweetListFeedItemActionsIconColorConstants.BLUE}`"
             :icon-total-items="10"
+            @click.prevent="() => {EventbusEngine.emit(TweetStoreEventTypeConstants.TOGGLE_TWEET_REPLY_MODAL, tweet);}"
           />
 
           <tweet-list-feed-item-actions-icon-component
               :iconType="`${TweetListFeedItemActionsIconConstants.REFRESH_ICON}`"
               :iconColor="`${TweetListFeedItemActionsIconColorConstants.GREEN}`"
-              :icon-total-items="Generators.generateRandomNumber()"
+              :icon-total-items="Generators.useGenerateRandomNumber()"
           />
 
           <tweet-list-feed-item-actions-icon-component
               :iconType="`${TweetListFeedItemActionsIconConstants.HEART_ICON}`"
               :iconColor="`${TweetListFeedItemActionsIconColorConstants.RED}`"
-              :icon-total-items="Generators.generateRandomNumber()"
+              :icon-total-items="Generators.useGenerateRandomNumber()"
           />
 
           <tweet-list-feed-item-actions-icon-component
               :iconType="`${TweetListFeedItemActionsIconConstants.UPLOAD_ICON}`"
               :iconColor="`${TweetListFeedItemActionsIconColorConstants.BLUE}`"
-              :icon-total-items="Generators.generateRandomNumber()"
+              :icon-total-items="Generators.useGenerateRandomNumber()"
           />
-
 
         </tweet-list-feed-item-actions-component>
       </div>
@@ -59,6 +59,7 @@
 
 <script setup lang="ts">
 import {PropType} from "@vue/runtime-core";
+import EventbusEngine from "../../engines/eventbus-engine";
 import type {ResponseTweetDTO} from "../../server/business/tweet/core/dtos/response-tweet-dto";
 import {Transitions} from "../../composables/transitions";
 import {Generators} from "../../composables/generators";
@@ -67,6 +68,7 @@ import TweetListFeedItemActionsComponent from "../tweet-list-feed-item-actions-c
 import TweetListFeedItemActionsIconComponent from "../tweet-list-feed-item-actions-icon-component/index.vue";
 import {TweetListFeedItemActionsIconConstants} from "../tweet-list-feed-item-actions-icon-component/constants/tweet-list-feed-item-actions-icon.constants";
 import {TweetListFeedItemActionsIconColorConstants} from "../tweet-list-feed-item-actions-icon-component/constants/tweet-list-feed-item-actions-icon-color.constants";
+import {TweetStoreEventTypeConstants} from "../../store/tweet-store/constants/tweet-store-event-type.constants";
 
 const props = defineProps({
   tweet: {
