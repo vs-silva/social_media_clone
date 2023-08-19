@@ -47,6 +47,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: translate('tweet.form.placeholderTextWhatsHappening')
+  },
+  tweetReplyId: {
+    type: String,
+    required: false,
+    default: ''
   }
 });
 
